@@ -4,6 +4,8 @@
 > **“Football remembers the scores. GHOSTLIGHT remembers the people.”**  
 > *The final whistle is not the end of a memory.*
 
+![GHOSTLIGHT: Stadium of Echoes Cover](public/cover.png)
+
 An interactive digital museum and sensory installation where forgotten football memories come back to life through locally running open-weight artificial intelligence (**Google Gemma 3 4B** via **Ollama**).
 
 The experience evokes entering an abandoned football stadium at midnight—hearing the cold wind through rusted turnstiles, watching floodlight towers gradually hum to life, and igniting individual beacons in the grandstands for each memory rescued from time.
