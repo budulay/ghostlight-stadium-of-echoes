@@ -137,7 +137,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 ? 'Current: Archival Darkroom (Click for Spectral Samhain Halloween)'
                 : 'Current: Spectral Samhain Halloween (Click for Midnight Sanctuary)'
             }
-            className={`w-[104px] h-[34px] rounded-lg border transition-all text-xs font-mono flex items-center justify-center gap-1.5 whitespace-nowrap shrink-0 cursor-pointer ${
+            className={`w-[34px] xl:w-[104px] h-[34px] rounded-lg border transition-all text-xs font-mono flex items-center justify-center gap-1.5 whitespace-nowrap shrink-0 cursor-pointer ${
               isHalloween
                 ? 'bg-purple-950/70 border-purple-500/60 text-purple-200 shadow-[0_0_18px_rgba(168,85,247,0.4)]'
                 : isDarkroom
@@ -152,16 +152,16 @@ export const Navbar: React.FC<NavbarProps> = ({
             ) : (
               <Moon className="w-3.5 h-3.5 text-slate-300 shrink-0" />
             )}
-            <span className="text-[10px] uppercase font-semibold tracking-wide">
+            <span className="text-[10px] uppercase font-semibold tracking-wide hidden xl:inline">
               {isHalloween ? 'Halloween' : isDarkroom ? 'Darkroom' : 'Midnight'}
             </span>
           </button>
 
-          {/* Weather Toggle with Fixed Width to Guarantee Zero Layout Shift */}
+          {/* Weather Toggle */}
           <button
             onClick={onToggleWeather}
             title={weather === 'rain' ? 'Switch to Midnight Mist (Current: Torrential Rain)' : 'Switch to Torrential Rain Derby (Current: Midnight Mist)'}
-            className={`w-[102px] h-[34px] rounded-lg border transition-all text-xs font-mono flex items-center justify-center gap-1.5 whitespace-nowrap shrink-0 cursor-pointer ${
+            className={`w-[34px] xl:w-[102px] h-[34px] rounded-lg border transition-all text-xs font-mono flex items-center justify-center gap-1.5 whitespace-nowrap shrink-0 cursor-pointer ${
               weather === 'rain'
                 ? 'bg-blue-950/60 border-blue-400/50 text-blue-300 shadow-[0_0_15px_rgba(59,130,246,0.35)]'
                 : 'border-slate-800 bg-slate-900/50 text-slate-400 hover:text-slate-200'
@@ -172,15 +172,15 @@ export const Navbar: React.FC<NavbarProps> = ({
             ) : (
               <CloudFog className="w-3.5 h-3.5 text-amber-300/80 shrink-0" />
             )}
-            <span className="text-[10px] uppercase font-semibold tracking-wide">
+            <span className="text-[10px] uppercase font-semibold tracking-wide hidden xl:inline">
               {weather === 'rain' ? 'Rain Derby' : 'Mist Mode'}
             </span>
           </button>
 
-          {/* Local AI Model Status Pill with Fixed Width and Zero Shift */}
+          {/* Local AI Model Status Pill */}
           <button
             onClick={onOpenOllamaModal}
-            className={`h-[34px] px-3 rounded-full text-[11px] font-sans border transition-all whitespace-nowrap shrink-0 flex items-center gap-1.5 cursor-pointer ${
+            className={`h-[34px] px-2.5 xl:px-3 rounded-full text-[11px] font-sans border transition-all whitespace-nowrap shrink-0 flex items-center gap-1.5 cursor-pointer ${
               isOllamaConnected
                 ? 'bg-emerald-950/40 border-emerald-500/40 text-emerald-300 hover:border-emerald-400 shadow-[0_0_12px_rgba(16,185,129,0.15)]'
                 : health?.demoMode
@@ -190,7 +190,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             title="Local AI Model & System Diagnostics"
           >
             <Cpu className={`w-3 h-3 ${isOllamaConnected ? 'text-emerald-400' : health?.demoMode ? 'text-sky-400' : 'text-amber-400'} shrink-0`} />
-            <span className="font-mono text-[10px] tracking-wide">
+            <span className="font-mono text-[10px] tracking-wide hidden sm:inline">
               {isOllamaConnected ? 'GEMMA 3 • 4B' : (health?.demoMode ? 'CLOUD DEMO' : 'LOCAL AI')}
             </span>
             <span
@@ -223,13 +223,16 @@ export const Navbar: React.FC<NavbarProps> = ({
             <Info className="w-4 h-4" />
           </button>
 
+          {/* Elegant Divider */}
+          <div className="h-4 w-px bg-slate-800 mx-0.5 hidden sm:block" />
+
           {/* Awaken Memory CTA Button */}
           <button
             onClick={() => onNavigate('create')}
-            className="h-[34px] flex items-center gap-1.5 px-3.5 rounded-lg text-xs font-semibold tracking-wider uppercase font-cinzel bg-gradient-to-r from-amber-500 via-amber-400 to-amber-600 text-slate-950 shadow-[0_0_20px_rgba(212,175,55,0.3)] hover:brightness-110 active:scale-95 transition-all shrink-0 cursor-pointer whitespace-nowrap"
+            className="h-[34px] flex items-center gap-1.5 px-3 sm:px-3.5 rounded-lg text-xs font-semibold tracking-wider uppercase font-cinzel bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 text-slate-950 shadow-[0_0_15px_rgba(212,175,55,0.25)] hover:shadow-[0_0_22px_rgba(212,175,55,0.45)] hover:brightness-105 active:scale-95 transition-all shrink-0 cursor-pointer whitespace-nowrap"
           >
             <Plus className="w-3.5 h-3.5 shrink-0" />
-            <span className="hidden sm:inline">Awaken</span> Memory
+            <span className="hidden xl:inline">Awaken</span> Memory
           </button>
         </div>
       </div>
