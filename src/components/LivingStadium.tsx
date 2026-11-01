@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, MapPin, Eye, Flame, Compass, Filter, Calendar, Share2, GitBranch } from 'lucide-react';
-import { StoredMemory } from '../types/memory';
+import { Sparkles, MapPin, Eye, Flame, Compass, Filter, Calendar, Share2, GitBranch, Ghost } from 'lucide-react';
+import { StoredMemory, MuseumTheme } from '../types/memory';
 
 interface LivingStadiumProps {
   memories: StoredMemory[];
   onSelectMemory: (memory: StoredMemory) => void;
   onAwakenClick: () => void;
   highlightedMemoryId?: string;
-  theme?: 'midnight' | 'darkroom';
+  theme?: MuseumTheme;
 }
 
 export const LivingStadium: React.FC<LivingStadiumProps> = ({
@@ -21,8 +21,18 @@ export const LivingStadium: React.FC<LivingStadiumProps> = ({
   const [hoveredMemory, setHoveredMemory] = useState<StoredMemory | null>(null);
   const [selectedStand, setSelectedStand] = useState<string>('all');
   const [showConstellations, setShowConstellations] = useState(true);
+  const [marigoldTributes, setMarigoldTributes] = useState<Record<string, number>>({});
 
   const isDarkroom = theme === 'darkroom';
+  const isHalloween = theme === 'halloween';
+
+  const handleAddMarigold = (e: React.MouseEvent, memoryId: string) => {
+    e.stopPropagation();
+    setMarigoldTributes((prev) => ({
+      ...prev,
+      [memoryId]: (prev[memoryId] || 0) + 1,
+    }));
+  };
 
   const filteredMemories = selectedStand === 'all'
     ? memories
@@ -161,19 +171,29 @@ export const LivingStadium: React.FC<LivingStadiumProps> = ({
 
       {/* Interactive Stadium Pitch & Grandstands Floorplan */}
       <div className={`relative w-full aspect-[4/3] sm:aspect-[16/10] max-h-[700px] rounded-3xl border transition-colors duration-500 p-4 sm:p-8 overflow-hidden shadow-[0_20px_70px_rgba(0,0,0,0.95)] ${
-        isDarkroom
+        isHalloween
+          ? 'border-purple-600/35 bg-gradient-to-b from-[#170B26] via-[#0D0616] to-[#170B26]'
+          : isDarkroom
           ? 'border-amber-600/30 bg-gradient-to-b from-[#1C1510] via-[#100D09] to-[#1C1510]'
           : 'border-amber-500/25 bg-gradient-to-b from-[#070D1B] via-[#040711] to-[#070D1B]'
       }`}>
         {/* Subtle Floodlight Halos at 4 Corners */}
-        <div className={`absolute top-4 left-4 w-32 h-32 rounded-full blur-2xl pointer-events-none ${isDarkroom ? 'bg-amber-500/15' : 'bg-amber-400/10'}`} />
-        <div className={`absolute top-4 right-4 w-32 h-32 rounded-full blur-2xl pointer-events-none ${isDarkroom ? 'bg-amber-500/15' : 'bg-amber-400/10'}`} />
-        <div className={`absolute bottom-4 left-4 w-32 h-32 rounded-full blur-2xl pointer-events-none ${isDarkroom ? 'bg-amber-500/15' : 'bg-amber-400/10'}`} />
-        <div className={`absolute bottom-4 right-4 w-32 h-32 rounded-full blur-2xl pointer-events-none ${isDarkroom ? 'bg-amber-500/15' : 'bg-amber-400/10'}`} />
+        <div className={`absolute top-4 left-4 w-32 h-32 rounded-full blur-2xl pointer-events-none ${
+          isHalloween ? 'bg-purple-500/20' : isDarkroom ? 'bg-amber-500/15' : 'bg-amber-400/10'
+        }`} />
+        <div className={`absolute top-4 right-4 w-32 h-32 rounded-full blur-2xl pointer-events-none ${
+          isHalloween ? 'bg-orange-500/20' : isDarkroom ? 'bg-amber-500/15' : 'bg-amber-400/10'
+        }`} />
+        <div className={`absolute bottom-4 left-4 w-32 h-32 rounded-full blur-2xl pointer-events-none ${
+          isHalloween ? 'bg-orange-500/20' : isDarkroom ? 'bg-amber-500/15' : 'bg-amber-400/10'
+        }`} />
+        <div className={`absolute bottom-4 right-4 w-32 h-32 rounded-full blur-2xl pointer-events-none ${
+          isHalloween ? 'bg-purple-500/20' : isDarkroom ? 'bg-amber-500/15' : 'bg-amber-400/10'
+        }`} />
 
         {/* Stadium Architectural Overlay SVG */}
         <svg
-          className={`w-full h-full ${isDarkroom ? 'text-amber-500/25' : 'text-amber-500/15'}`}
+          className={`w-full h-full ${isHalloween ? 'text-purple-500/25' : isDarkroom ? 'text-amber-500/25' : 'text-amber-500/15'}`}
           viewBox="0 0 1000 650"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
@@ -212,18 +232,18 @@ export const LivingStadium: React.FC<LivingStadiumProps> = ({
             strokeWidth="1"
           />
 
-          {/* Pitch Perimeter (Greenish Grass Aura vs Aged Muddy Turf) */}
+          {/* Pitch Perimeter (Greenish Grass vs Aged Turf vs Abyssal Violet Pitch) */}
           <rect
             x="220"
             y="160"
             width="560"
             height="330"
             rx="16"
-            fill={isDarkroom ? "#1B2217" : "#061A12"}
-            fillOpacity={isDarkroom ? 0.6 : 0.45}
-            stroke={isDarkroom ? "#D97706" : "#10B981"}
+            fill={isHalloween ? "#120A20" : isDarkroom ? "#1B2217" : "#061A12"}
+            fillOpacity={isHalloween ? 0.75 : isDarkroom ? 0.6 : 0.45}
+            stroke={isHalloween ? "#A855F7" : isDarkroom ? "#D97706" : "#10B981"}
             strokeWidth="1.5"
-            strokeOpacity={isDarkroom ? 0.4 : 0.3}
+            strokeOpacity={isHalloween ? 0.45 : isDarkroom ? 0.4 : 0.3}
           />
 
           {/* Halfway line */}
@@ -232,7 +252,7 @@ export const LivingStadium: React.FC<LivingStadiumProps> = ({
             y1="160"
             x2="500"
             y2="490"
-            stroke={isDarkroom ? "#D97706" : "#10B981"}
+            stroke={isHalloween ? "#A855F7" : isDarkroom ? "#D97706" : "#10B981"}
             strokeWidth="1.5"
             strokeOpacity={isDarkroom ? 0.45 : 0.35}
           />
@@ -370,6 +390,7 @@ export const LivingStadium: React.FC<LivingStadiumProps> = ({
         {filteredMemories.map((m) => {
           const isHighlighted = m.id === highlightedMemoryId;
           const isHovered = hoveredMemory?.id === m.id;
+          const tributes = marigoldTributes[m.id] || 0;
 
           return (
             <div
@@ -385,18 +406,31 @@ export const LivingStadium: React.FC<LivingStadiumProps> = ({
             >
               {/* Pulsing Beacon Halo */}
               <div
-                className={`w-6 h-6 rounded-full flex items-center justify-center transition-all ${
+                className={`relative w-6 h-6 rounded-full flex items-center justify-center transition-all ${
                   isHighlighted || isHovered ? 'scale-150' : 'group-hover:scale-130'
                 }`}
               >
                 <div
-                  className={`absolute w-7 h-7 rounded-full bg-amber-400 animate-ping opacity-40`}
-                />
-                <div
-                  className={`w-3.5 h-3.5 rounded-full border border-amber-200 bg-amber-400 shadow-[0_0_15px_rgba(245,215,127,1)] ${
-                    isHighlighted ? 'bg-white ring-4 ring-amber-400/60' : ''
+                  className={`absolute w-7 h-7 rounded-full animate-ping opacity-40 ${
+                    isHalloween ? 'bg-orange-500' : isDarkroom ? 'bg-amber-500' : 'bg-amber-400'
                   }`}
                 />
+                <div
+                  className={`w-3.5 h-3.5 rounded-full border transition-all ${
+                    isHalloween
+                      ? 'border-purple-300 bg-gradient-to-tr from-orange-500 to-amber-300 shadow-[0_0_18px_rgba(249,115,22,0.95)]'
+                      : isDarkroom
+                      ? 'border-amber-200 bg-amber-500 shadow-[0_0_15px_rgba(245,158,11,0.9)]'
+                      : 'border-amber-200 bg-amber-400 shadow-[0_0_15px_rgba(245,215,127,1)]'
+                  } ${isHighlighted ? 'bg-white ring-4 ring-amber-400/60' : ''}`}
+                />
+
+                {/* Marigold Tribute Badge for Samhain Mode */}
+                {tributes > 0 && (
+                  <span className="absolute -top-3.5 -right-3 text-[11px] filter drop-shadow-[0_0_6px_rgba(249,115,22,0.9)] animate-pulse pointer-events-none">
+                    🌼
+                  </span>
+                )}
               </div>
             </div>
           );
@@ -410,16 +444,26 @@ export const LivingStadium: React.FC<LivingStadiumProps> = ({
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
               transition={{ duration: 0.15 }}
-              className="absolute z-30 pointer-events-none p-4 rounded-xl bg-[#090F20]/95 border border-amber-400/40 shadow-[0_10px_35px_rgba(0,0,0,0.9)] max-w-xs backdrop-blur-md text-left space-y-2"
+              className={`absolute z-30 p-4 rounded-xl shadow-[0_10px_35px_rgba(0,0,0,0.95)] max-w-xs backdrop-blur-md text-left space-y-2 pointer-events-auto transition-colors ${
+                isHalloween
+                  ? 'bg-[#150B24]/95 border border-purple-500/50 shadow-[0_10px_35px_rgba(168,85,247,0.3)]'
+                  : isDarkroom
+                  ? 'bg-[#18110D]/95 border border-amber-500/40'
+                  : 'bg-[#090F20]/95 border border-amber-400/40'
+              }`}
               style={{
                 left: `${Math.min(78, Math.max(22, hoveredMemory.seatLocation.x))}%`,
                 top: `${hoveredMemory.seatLocation.y > 60 ? hoveredMemory.seatLocation.y - 20 : hoveredMemory.seatLocation.y + 6}%`,
                 transform: 'translateX(-50%)',
               }}
             >
-              <div className="flex items-center justify-between text-[10px] font-mono text-amber-300">
-                <span>{hoveredMemory.seatLocation.stand.toUpperCase()}</span>
-                <span>SEC {hoveredMemory.seatLocation.sectorNumber} • SEAT {hoveredMemory.seatLocation.seatNumber}</span>
+              <div className="flex items-center justify-between text-[10px] font-mono">
+                <span className={isHalloween ? 'text-purple-300' : 'text-amber-300'}>
+                  {hoveredMemory.seatLocation.stand.toUpperCase()}
+                </span>
+                <span className="text-slate-400">
+                  SEC {hoveredMemory.seatLocation.sectorNumber} • SEAT {hoveredMemory.seatLocation.seatNumber}
+                </span>
               </div>
               <h4 className="font-cinzel text-sm font-bold text-white tracking-wide">
                 {hoveredMemory.title}
@@ -427,9 +471,26 @@ export const LivingStadium: React.FC<LivingStadiumProps> = ({
               <p className="text-xs font-serif italic text-slate-300 line-clamp-2">
                 “{hoveredMemory.story}”
               </p>
-              <div className="flex items-center justify-between pt-1 border-t border-slate-800 text-[10px] text-slate-400">
-                <span>{hoveredMemory.year ? `Circa ${hoveredMemory.year}` : 'Unknown Year'}</span>
-                <span className="text-amber-400 font-medium">Click to open exhibit →</span>
+
+              <div className="flex items-center justify-between pt-2 border-t border-slate-800 text-[10px]">
+                <button
+                  onClick={() => onSelectMemory(hoveredMemory)}
+                  className={`font-semibold transition-colors cursor-pointer ${
+                    isHalloween ? 'text-purple-300 hover:text-white' : 'text-amber-400 hover:text-white'
+                  }`}
+                >
+                  Enter Exhibit →
+                </button>
+
+                {/* Leave Marigold Tribute Button */}
+                <button
+                  onClick={(e) => handleAddMarigold(e, hoveredMemory.id)}
+                  title="Leave a marigold flower tribute in honor of this memory"
+                  className="px-2 py-0.5 rounded-full bg-orange-950/60 border border-orange-500/40 text-orange-200 hover:bg-orange-500/30 transition-all flex items-center gap-1 cursor-pointer"
+                >
+                  <span>🌼</span>
+                  <span>{marigoldTributes[hoveredMemory.id] || 0}</span>
+                </button>
               </div>
             </motion.div>
           )}

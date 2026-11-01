@@ -13,7 +13,8 @@ import { AboutModal } from './components/AboutModal';
 import {
   HealthStatus,
   StoredMemory,
-  MemorySubmission
+  MemorySubmission,
+  MuseumTheme
 } from './types/memory';
 import {
   fetchHealth,
@@ -38,9 +39,12 @@ export function App() {
   const [isNewAwakening, setIsNewAwakening] = useState(false);
   const [lastProcessedBy, setLastProcessedBy] = useState<string>('ollama_gemma3');
   const [weather, setWeather] = useState<'fog' | 'rain'>('fog');
-  const [theme, setTheme] = useState<'midnight' | 'darkroom'>(() => {
+  const [theme, setTheme] = useState<MuseumTheme>(() => {
     if (typeof window !== 'undefined') {
-      return (localStorage.getItem('ghostlight_theme') as 'midnight' | 'darkroom') || 'midnight';
+      const saved = localStorage.getItem('ghostlight_theme') as MuseumTheme;
+      if (saved === 'midnight' || saved === 'darkroom' || saved === 'halloween') {
+        return saved;
+      }
     }
     return 'midnight';
   });
@@ -60,10 +64,11 @@ export function App() {
 
   // Sync theme class to document body
   useEffect(() => {
+    document.body.classList.remove('theme-darkroom', 'theme-halloween');
     if (theme === 'darkroom') {
       document.body.classList.add('theme-darkroom');
-    } else {
-      document.body.classList.remove('theme-darkroom');
+    } else if (theme === 'halloween') {
+      document.body.classList.add('theme-halloween');
     }
     localStorage.setItem('ghostlight_theme', theme);
   }, [theme]);
@@ -98,8 +103,11 @@ export function App() {
   };
 
   const handleToggleTheme = () => {
-    const newTheme = theme === 'midnight' ? 'darkroom' : 'midnight';
-    setTheme(newTheme);
+    setTheme((prev) => {
+      if (prev === 'midnight') return 'darkroom';
+      if (prev === 'darkroom') return 'halloween';
+      return 'midnight';
+    });
   };
 
   // Launch AI Seance Workflow
@@ -222,6 +230,7 @@ export function App() {
                 onLaunchSample={handleLaunchSample}
                 sampleMemory={memories[0]}
                 totalMemoriesCount={memories.length}
+                theme={theme}
               />
             </motion.div>
           )}

@@ -1,4 +1,4 @@
-import { StoredMemory } from '../types/memory';
+import { StoredMemory, MuseumTheme } from '../types/memory';
 
 /**
  * Downloads the memory exhibit metadata as structured JSON
@@ -39,11 +39,11 @@ export function exportMemoryAsJSON(memory: StoredMemory) {
 
 /**
  * Generates and downloads a museum-grade 1200x1500px archival card as PNG
- * Supports 'midnight' (Midnight Sanctuary) and 'darkroom' (Archival Darkroom & Newsprint) themes
+ * Supports 'midnight' (Midnight Sanctuary), 'darkroom' (Archival Darkroom & Newsprint), and 'halloween' (Spectral Samhain)
  */
 export async function downloadMemoryCardImage(
   memory: StoredMemory,
-  theme: 'midnight' | 'darkroom' = 'midnight'
+  theme: MuseumTheme = 'midnight'
 ): Promise<void> {
   const canvas = document.createElement('canvas');
   const width = 1200;
@@ -54,10 +54,15 @@ export async function downloadMemoryCardImage(
   if (!ctx) return;
 
   const isDarkroom = theme === 'darkroom';
+  const isHalloween = theme === 'halloween';
 
-  // 1. Background gradient (Midnight Navy vs Darkroom Carbon Noir)
+  // 1. Background gradient (Midnight Navy vs Darkroom Carbon Noir vs Halloween Abyssal Violet)
   const bgGrad = ctx.createRadialGradient(width / 2, 200, 50, width / 2, height / 2, 900);
-  if (isDarkroom) {
+  if (isHalloween) {
+    bgGrad.addColorStop(0, '#260E3C');
+    bgGrad.addColorStop(0.5, '#130622');
+    bgGrad.addColorStop(1, '#080210');
+  } else if (isDarkroom) {
     bgGrad.addColorStop(0, '#261910');
     bgGrad.addColorStop(0.5, '#160F0A');
     bgGrad.addColorStop(1, '#0C0805');
@@ -69,9 +74,9 @@ export async function downloadMemoryCardImage(
   ctx.fillStyle = bgGrad;
   ctx.fillRect(0, 0, width, height);
 
-  // Subtle film grain for Darkroom mode
-  if (isDarkroom) {
-    ctx.fillStyle = 'rgba(245, 158, 11, 0.035)';
+  // Subtle film grain
+  if (isDarkroom || isHalloween) {
+    ctx.fillStyle = isHalloween ? 'rgba(168, 85, 247, 0.04)' : 'rgba(245, 158, 11, 0.035)';
     for (let i = 0; i < 4000; i++) {
       ctx.fillRect(Math.random() * width, Math.random() * height, 1.5, 1.5);
     }
@@ -82,7 +87,11 @@ export async function downloadMemoryCardImage(
   const leftBeam = ctx.createRadialGradient(100, 0, 10, 300, 600, 700);
   leftBeam.addColorStop(
     0,
-    isDarkroom ? 'rgba(251, 191, 36, 0.22)' : 'rgba(245, 215, 127, 0.18)'
+    isHalloween
+      ? 'rgba(168, 85, 247, 0.25)'
+      : isDarkroom
+      ? 'rgba(251, 191, 36, 0.22)'
+      : 'rgba(245, 215, 127, 0.18)'
   );
   leftBeam.addColorStop(1, 'rgba(212, 175, 55, 0)');
   ctx.fillStyle = leftBeam;
@@ -96,7 +105,11 @@ export async function downloadMemoryCardImage(
   const rightBeam = ctx.createRadialGradient(width - 100, 0, 10, width - 300, 600, 700);
   rightBeam.addColorStop(
     0,
-    isDarkroom ? 'rgba(251, 191, 36, 0.22)' : 'rgba(245, 215, 127, 0.18)'
+    isHalloween
+      ? 'rgba(249, 115, 22, 0.25)'
+      : isDarkroom
+      ? 'rgba(251, 191, 36, 0.22)'
+      : 'rgba(245, 215, 127, 0.18)'
   );
   rightBeam.addColorStop(1, 'rgba(212, 175, 55, 0)');
   ctx.fillStyle = rightBeam;
@@ -108,18 +121,26 @@ export async function downloadMemoryCardImage(
   ctx.fill();
   ctx.restore();
 
-  // 3. Ornate Double Gold / Antique Brass Border
-  ctx.strokeStyle = isDarkroom ? 'rgba(224, 169, 109, 0.55)' : 'rgba(212, 175, 55, 0.45)';
+  // 3. Ornate Double Gold / Antique Brass / Forged Iron Violet Border
+  ctx.strokeStyle = isHalloween
+    ? 'rgba(168, 85, 247, 0.65)'
+    : isDarkroom
+    ? 'rgba(224, 169, 109, 0.55)'
+    : 'rgba(212, 175, 55, 0.45)';
   ctx.lineWidth = 3;
   ctx.strokeRect(50, 50, width - 100, height - 100);
 
-  ctx.strokeStyle = isDarkroom ? 'rgba(224, 169, 109, 0.25)' : 'rgba(212, 175, 55, 0.2)';
+  ctx.strokeStyle = isHalloween
+    ? 'rgba(249, 115, 22, 0.35)'
+    : isDarkroom
+    ? 'rgba(224, 169, 109, 0.25)'
+    : 'rgba(212, 175, 55, 0.2)';
   ctx.lineWidth = 1;
   ctx.strokeRect(62, 62, width - 124, height - 124);
 
   // Corner ornaments
   const drawCorner = (x: number, y: number) => {
-    ctx.fillStyle = isDarkroom ? '#F59E0B' : '#D4AF37';
+    ctx.fillStyle = isHalloween ? '#F97316' : isDarkroom ? '#F59E0B' : '#D4AF37';
     ctx.fillRect(x - 4, y - 4, 8, 8);
   };
   drawCorner(50, 50);
@@ -129,16 +150,24 @@ export async function downloadMemoryCardImage(
 
   // 4. Header: Museum title & tagline
   ctx.textAlign = 'center';
-  ctx.fillStyle = isDarkroom ? '#F59E0B' : '#D4AF37';
+  ctx.fillStyle = isHalloween ? '#C084FC' : isDarkroom ? '#F59E0B' : '#D4AF37';
   ctx.font = isDarkroom ? 'bold 22px "Playfair Display", Georgia, serif' : '600 22px Cinzel, serif';
   ctx.letterSpacing = '6px';
-  ctx.fillText('GHOSTLIGHT : STADIUM OF ECHOES', width / 2, 120);
+  ctx.fillText(
+    isHalloween ? 'GHOSTLIGHT : STADIUM OF ECHOES 🎃' : 'GHOSTLIGHT : STADIUM OF ECHOES',
+    width / 2,
+    120
+  );
 
-  ctx.fillStyle = isDarkroom ? '#A8A29E' : '#94A3B8';
+  ctx.fillStyle = isHalloween ? '#E9D5FF' : isDarkroom ? '#A8A29E' : '#94A3B8';
   ctx.font = isDarkroom
     ? 'italic 16px "Newsreader", "Cormorant Garamond", Georgia, serif'
     : 'italic 16px "Cormorant Garamond", Georgia, serif';
-  ctx.fillText('“Where memories never die”', width / 2, 148);
+  ctx.fillText(
+    isHalloween ? '“Where echoes rise on Hallows\' Eve”' : '“Where memories never die”',
+    width / 2,
+    148
+  );
 
   ctx.strokeStyle = 'rgba(212, 175, 55, 0.3)';
   ctx.beginPath();

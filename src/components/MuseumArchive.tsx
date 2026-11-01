@@ -16,7 +16,7 @@ import {
   Archive,
   CheckCircle2
 } from 'lucide-react';
-import { StoredMemory } from '../types/memory';
+import { StoredMemory, MuseumTheme } from '../types/memory';
 import { downloadMemoryCardImage, exportMemoryAsJSON } from '../services/exportCard';
 import { downloadMatchdayTicketImage } from '../services/exportTicket';
 import { exportTimeCapsule, importTimeCapsule } from '../services/capsule';
@@ -27,7 +27,7 @@ interface MuseumArchiveProps {
   onDeleteMemory: (id: string) => void;
   onAwakenClick: () => void;
   onCapsuleImported: (updatedList: StoredMemory[]) => void;
-  theme?: 'midnight' | 'darkroom';
+  theme?: MuseumTheme;
 }
 
 export const MuseumArchive: React.FC<MuseumArchiveProps> = ({
@@ -39,6 +39,7 @@ export const MuseumArchive: React.FC<MuseumArchiveProps> = ({
   theme = 'midnight',
 }) => {
   const isDarkroom = theme === 'darkroom';
+  const isHalloween = theme === 'halloween';
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedDecade, setSelectedDecade] = useState<string>('all');
   const [memoryToDelete, setMemoryToDelete] = useState<StoredMemory | null>(null);
@@ -207,7 +208,9 @@ export const MuseumArchive: React.FC<MuseumArchiveProps> = ({
               exit={{ opacity: 0, scale: 0.95 }}
               transition={{ duration: 0.3 }}
               className={`group rounded-2xl border transition-all duration-300 overflow-hidden flex flex-col justify-between shadow-[0_10px_30px_rgba(0,0,0,0.8)] ${
-                isDarkroom
+                isHalloween
+                  ? 'border-purple-600/30 bg-gradient-to-b from-[#180C28] to-[#0E0618] hover:border-purple-400/60 hover:shadow-[0_15px_40px_rgba(168,85,247,0.25)]'
+                  : isDarkroom
                   ? 'border-amber-600/25 bg-gradient-to-b from-[#1E1712] to-[#120E0A] hover:border-amber-500/50 hover:shadow-[0_15px_40px_rgba(245,158,11,0.18)]'
                   : 'border-amber-500/20 bg-gradient-to-b from-[#090F21] to-[#050811] hover:border-amber-400/50 hover:shadow-[0_15px_40px_rgba(212,175,55,0.15)]'
               }`}
@@ -226,7 +229,9 @@ export const MuseumArchive: React.FC<MuseumArchiveProps> = ({
                     />
                   ) : (
                     <div className={`w-full h-full flex flex-col items-center justify-center p-4 border-b ${
-                      isDarkroom
+                      isHalloween
+                        ? 'bg-gradient-to-b from-[#221038] to-[#11071E] text-purple-400/40 border-purple-600/20'
+                        : isDarkroom
                         ? 'bg-gradient-to-b from-[#211913] to-[#130E0A] text-amber-500/40 border-amber-600/15'
                         : 'bg-gradient-to-b from-[#0C152B] to-[#060A14] text-amber-400/40 border-amber-500/10'
                     }`}>
@@ -238,7 +243,11 @@ export const MuseumArchive: React.FC<MuseumArchiveProps> = ({
                   )}
 
                   {/* Year Tag Overlay */}
-                  <div className="absolute top-3 left-3 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-950/80 backdrop-blur-md border border-amber-400/30 text-[10px] font-mono text-amber-300">
+                  <div className={`absolute top-3 left-3 flex items-center gap-1.5 px-2.5 py-1 rounded-full backdrop-blur-md border text-[10px] font-mono ${
+                    isHalloween
+                      ? 'bg-purple-950/80 border-purple-400/40 text-purple-300'
+                      : 'bg-slate-950/80 border-amber-400/30 text-amber-300'
+                  }`}>
                     <Calendar className="w-3 h-3" />
                     <span>{m.year ? `CIRCA ${m.year}` : 'LOST YEAR'}</span>
                   </div>
@@ -252,7 +261,9 @@ export const MuseumArchive: React.FC<MuseumArchiveProps> = ({
                 {/* Content */}
                 <div className="p-5 space-y-3">
                   <div className="flex items-center gap-2 text-xs">
-                    <span className="text-[11px] font-serif italic text-amber-300/90 truncate">
+                    <span className={`text-[11px] font-serif italic truncate ${
+                      isHalloween ? 'text-purple-300/90' : 'text-amber-300/90'
+                    }`}>
                       {m.theme}
                     </span>
                   </div>
@@ -268,7 +279,11 @@ export const MuseumArchive: React.FC<MuseumArchiveProps> = ({
                     “{m.story}”
                   </p>
 
-                  <div className="text-[11px] font-serif text-amber-400/80 italic border-l border-amber-400/30 pl-2 line-clamp-1">
+                  <div className={`text-[11px] font-serif italic border-l pl-2 line-clamp-1 ${
+                    isHalloween
+                      ? 'text-orange-400/80 border-purple-400/40'
+                      : 'text-amber-400/80 border-amber-400/30'
+                  }`}>
                     “{m.epitaph}”
                   </div>
                 </div>
@@ -276,11 +291,17 @@ export const MuseumArchive: React.FC<MuseumArchiveProps> = ({
 
               {/* Action Buttons Bar */}
               <div className={`px-5 py-3.5 border-t flex items-center justify-between gap-2 text-xs ${
-                isDarkroom ? 'border-amber-900/30 bg-[#0E0A08]/80' : 'border-slate-800/80 bg-slate-950/60'
+                isHalloween
+                  ? 'border-purple-900/40 bg-[#0E0618]/90'
+                  : isDarkroom
+                  ? 'border-amber-900/30 bg-[#0E0A08]/80'
+                  : 'border-slate-800/80 bg-slate-950/60'
               }`}>
                 <button
                   onClick={() => onOpenMemory(m)}
-                  className="font-cinzel font-semibold text-amber-300 hover:text-white flex items-center gap-1.5 transition-colors cursor-pointer"
+                  className={`font-cinzel font-semibold flex items-center gap-1.5 transition-colors cursor-pointer ${
+                    isHalloween ? 'text-purple-300 hover:text-white' : 'text-amber-300 hover:text-white'
+                  }`}
                 >
                   <Eye className="w-3.5 h-3.5" />
                   Enter Exhibit

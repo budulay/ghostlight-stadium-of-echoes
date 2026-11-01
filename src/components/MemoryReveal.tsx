@@ -18,7 +18,7 @@ import {
   Bell
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
-import { StoredMemory } from '../types/memory';
+import { StoredMemory, MuseumTheme } from '../types/memory';
 import { ghostNarrator } from '../services/speech';
 import { downloadMemoryCardImage, exportMemoryAsJSON } from '../services/exportCard';
 import { downloadMatchdayTicketImage } from '../services/exportTicket';
@@ -31,7 +31,7 @@ interface MemoryRevealProps {
   onAwakenAnother?: () => void;
   processedBy?: string;
   modelName?: string;
-  theme?: 'midnight' | 'darkroom';
+  theme?: MuseumTheme;
 }
 
 export const MemoryReveal: React.FC<MemoryRevealProps> = ({
@@ -45,6 +45,7 @@ export const MemoryReveal: React.FC<MemoryRevealProps> = ({
   theme = 'midnight',
 }) => {
   const isDarkroom = theme === 'darkroom';
+  const isHalloween = theme === 'halloween';
   const [narratorState, setNarratorState] = useState<'idle' | 'speaking' | 'paused'>('idle');
   const [voiceMode, setVoiceMode] = useState<'tannoy' | 'whisper'>('tannoy');
   const [isExportingCard, setIsExportingCard] = useState(false);
@@ -182,7 +183,9 @@ export const MemoryReveal: React.FC<MemoryRevealProps> = ({
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.6 }}
           className={`relative rounded-3xl border backdrop-blur-2xl shadow-[0_25px_80px_rgba(0,0,0,0.95)] overflow-hidden p-6 sm:p-10 md:p-12 space-y-8 transition-colors ${
-            isDarkroom
+            isHalloween
+              ? 'border-purple-600/40 bg-[#160B24]/95 shadow-[0_25px_80px_rgba(168,85,247,0.2)]'
+              : isDarkroom
               ? 'border-amber-600/35 bg-[#1C1510]/95'
               : 'border-amber-400/35 bg-[#090E1D]/90'
           }`}
@@ -418,7 +421,9 @@ export const MemoryReveal: React.FC<MemoryRevealProps> = ({
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5 }}
           className={`rounded-3xl border p-6 sm:p-10 shadow-2xl space-y-6 text-slate-200 transition-colors ${
-            isDarkroom
+            isHalloween
+              ? 'border-purple-600/40 bg-gradient-to-b from-[#1C0E2F] to-[#0E0618]'
+              : isDarkroom
               ? 'border-amber-600/40 bg-gradient-to-b from-[#221812] to-[#120E0A]'
               : 'border-amber-400/40 bg-gradient-to-b from-[#0E162B] to-[#070D1A]'
           }`}

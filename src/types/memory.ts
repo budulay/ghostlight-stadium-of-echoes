@@ -57,3 +57,5 @@ export interface MemorySubmission {
   stadium?: string;
   artifactImage?: string;
 }
+
+export type MuseumTheme = 'midnight' | 'darkroom' | 'halloween';

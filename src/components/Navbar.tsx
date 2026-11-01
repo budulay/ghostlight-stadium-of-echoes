@@ -1,6 +1,6 @@
 import React from 'react';
-import { Volume2, VolumeX, Sparkles, BookOpen, MapPin, Plus, Cpu, Info, CloudRain, CloudFog, Moon, Flame } from 'lucide-react';
-import { HealthStatus } from '../types/memory';
+import { Volume2, VolumeX, Sparkles, BookOpen, MapPin, Plus, Cpu, Info, CloudRain, CloudFog, Moon, Flame, Ghost } from 'lucide-react';
+import { HealthStatus, MuseumTheme } from '../types/memory';
 import { ghostNarrator } from '../services/speech';
 
 interface NavbarProps {
@@ -10,7 +10,7 @@ interface NavbarProps {
   health: HealthStatus | null;
   weather: 'fog' | 'rain';
   onToggleWeather: () => void;
-  theme: 'midnight' | 'darkroom';
+  theme: MuseumTheme;
   onToggleTheme: () => void;
   onOpenOllamaModal: () => void;
   onOpenAboutModal: () => void;
@@ -37,10 +37,15 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   const isOllamaConnected = Boolean(health?.ollama?.connected && health?.ollama?.modelAvailable);
   const isDarkroom = theme === 'darkroom';
+  const isHalloween = theme === 'halloween';
 
   return (
     <header className={`sticky top-0 z-40 w-full border-b backdrop-blur-md transition-colors duration-500 ${
-      isDarkroom ? 'border-amber-600/25 bg-[#0C0A09]/90' : 'border-amber-500/15 bg-[#04060B]/85'
+      isHalloween
+        ? 'border-purple-600/30 bg-[#09060E]/90'
+        : isDarkroom
+        ? 'border-amber-600/25 bg-[#0C0A09]/90'
+        : 'border-amber-500/15 bg-[#04060B]/85'
     }`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
         {/* Brand */}
@@ -49,24 +54,28 @@ export const Navbar: React.FC<NavbarProps> = ({
           className="flex items-center gap-3 text-left group focus:outline-none shrink-0"
         >
           <div className={`relative w-10 h-10 rounded-full border flex items-center justify-center transition-all shrink-0 ${
-            isDarkroom
+            isHalloween
+              ? 'border-purple-500/60 bg-gradient-to-b from-purple-500/30 via-orange-500/20 to-transparent shadow-[0_0_20px_rgba(168,85,247,0.4)]'
+              : isDarkroom
               ? 'border-amber-500/50 bg-gradient-to-b from-amber-500/25 to-transparent shadow-[0_0_18px_rgba(245,158,11,0.35)]'
               : 'border-amber-400/40 bg-gradient-to-b from-amber-400/20 to-transparent shadow-[0_0_15px_rgba(212,175,55,0.25)]'
           }`}>
-            <span className="font-serif text-xl font-bold text-amber-200">G</span>
+            <span className={`font-serif text-xl font-bold ${isHalloween ? 'text-purple-200' : 'text-amber-200'}`}>G</span>
             <div className={`absolute inset-0 rounded-full animate-ping opacity-20 ${
-              isDarkroom ? 'bg-amber-500' : 'bg-amber-400'
+              isHalloween ? 'bg-purple-500' : isDarkroom ? 'bg-amber-500' : 'bg-amber-400'
             }`} />
           </div>
           <div>
             <div className="font-cinzel text-lg sm:text-xl font-bold tracking-[0.2em] text-white flex items-center gap-2 whitespace-nowrap">
               GHOSTLIGHT
               <span className={`text-[10px] tracking-normal px-2 py-0.5 rounded-full border font-sans font-medium uppercase hidden sm:inline-block ${
-                isDarkroom
+                isHalloween
+                  ? 'border-purple-500/40 bg-purple-600/20 text-purple-200 shadow-[0_0_10px_rgba(168,85,247,0.3)]'
+                  : isDarkroom
                   ? 'border-amber-500/40 bg-amber-600/15 text-amber-200'
                   : 'border-amber-400/30 bg-amber-500/10 text-amber-300'
               }`}>
-                {isDarkroom ? 'Pressroom' : 'Museum'}
+                {isHalloween ? 'Samhain' : isDarkroom ? 'Pressroom' : 'Museum'}
               </span>
             </div>
             <div className="text-[11px] font-sans tracking-widest text-slate-400 uppercase font-light whitespace-nowrap">
@@ -118,23 +127,33 @@ export const Navbar: React.FC<NavbarProps> = ({
 
         {/* Right side controls */}
         <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
-          {/* Theme Switcher Toggle (Midnight Sanctuary vs Archival Darkroom) */}
+          {/* Theme Switcher 3-Way Toggle (Midnight -> Darkroom -> Halloween) */}
           <button
             onClick={onToggleTheme}
-            title={isDarkroom ? 'Switch to Midnight Sanctuary theme' : 'Switch to Archival Darkroom & Amber theme'}
-            className={`w-[96px] h-[34px] rounded-lg border transition-all text-xs font-mono flex items-center justify-center gap-1.5 whitespace-nowrap shrink-0 cursor-pointer ${
-              isDarkroom
+            title={
+              theme === 'midnight'
+                ? 'Current: Midnight Sanctuary (Click for Archival Darkroom)'
+                : theme === 'darkroom'
+                ? 'Current: Archival Darkroom (Click for Spectral Samhain Halloween)'
+                : 'Current: Spectral Samhain Halloween (Click for Midnight Sanctuary)'
+            }
+            className={`w-[104px] h-[34px] rounded-lg border transition-all text-xs font-mono flex items-center justify-center gap-1.5 whitespace-nowrap shrink-0 cursor-pointer ${
+              isHalloween
+                ? 'bg-purple-950/70 border-purple-500/60 text-purple-200 shadow-[0_0_18px_rgba(168,85,247,0.4)]'
+                : isDarkroom
                 ? 'bg-amber-950/60 border-amber-500/50 text-amber-200 shadow-[0_0_15px_rgba(245,158,11,0.3)]'
                 : 'border-slate-800 bg-slate-900/50 text-slate-400 hover:text-slate-200'
             }`}
           >
-            {isDarkroom ? (
+            {isHalloween ? (
+              <Ghost className="w-3.5 h-3.5 text-purple-300 animate-bounce shrink-0" />
+            ) : isDarkroom ? (
               <Flame className="w-3.5 h-3.5 text-amber-400 animate-pulse shrink-0" />
             ) : (
               <Moon className="w-3.5 h-3.5 text-slate-300 shrink-0" />
             )}
             <span className="text-[10px] uppercase font-semibold tracking-wide">
-              {isDarkroom ? 'Darkroom' : 'Midnight'}
+              {isHalloween ? 'Halloween' : isDarkroom ? 'Darkroom' : 'Midnight'}
             </span>
           </button>
 

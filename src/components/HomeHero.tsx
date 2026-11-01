@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Sparkles, ArrowRight, Play, ShieldCheck, Flame, Compass } from 'lucide-react';
-import { StoredMemory } from '../types/memory';
+import { Sparkles, ArrowRight, Play, ShieldCheck, Flame, Compass, Ghost } from 'lucide-react';
+import { StoredMemory, MuseumTheme } from '../types/memory';
 
 interface HomeHeroProps {
   onAwakenClick: () => void;
@@ -9,6 +9,7 @@ interface HomeHeroProps {
   onLaunchSample: (sample: StoredMemory) => void;
   sampleMemory?: StoredMemory;
   totalMemoriesCount: number;
+  theme?: MuseumTheme;
 }
 
 export const HomeHero: React.FC<HomeHeroProps> = ({
@@ -17,21 +18,41 @@ export const HomeHero: React.FC<HomeHeroProps> = ({
   onLaunchSample,
   sampleMemory,
   totalMemoriesCount,
+  theme = 'midnight',
 }) => {
+  const isHalloween = theme === 'halloween';
+  const isDarkroom = theme === 'darkroom';
+
   return (
     <div className="relative min-h-[calc(100vh-5rem)] flex flex-col justify-between items-center px-4 sm:px-6 lg:px-8 py-12 text-center overflow-hidden">
       {/* Subtle Top Atmospheric Beam */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[80vw] h-[350px] bg-gradient-to-b from-amber-400/10 via-amber-500/5 to-transparent blur-3xl pointer-events-none" />
+      <div className={`absolute top-0 left-1/2 -translate-x-1/2 w-[80vw] h-[350px] blur-3xl pointer-events-none ${
+        isHalloween
+          ? 'bg-gradient-to-b from-purple-500/15 via-orange-500/10 to-transparent'
+          : isDarkroom
+          ? 'bg-gradient-to-b from-amber-500/15 via-amber-600/5 to-transparent'
+          : 'bg-gradient-to-b from-amber-400/10 via-amber-500/5 to-transparent'
+      }`} />
 
       {/* Top Banner Tag */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1 }}
-        className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-amber-500/30 bg-amber-950/20 backdrop-blur-md text-amber-200 text-xs sm:text-sm tracking-[0.25em] uppercase font-cinzel mb-8 shadow-[0_0_20px_rgba(212,175,55,0.15)]"
+        className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full border backdrop-blur-md text-xs sm:text-sm tracking-[0.25em] uppercase font-cinzel mb-8 transition-colors ${
+          isHalloween
+            ? 'border-purple-500/40 bg-purple-950/30 text-purple-200 shadow-[0_0_20px_rgba(168,85,247,0.3)]'
+            : isDarkroom
+            ? 'border-amber-500/40 bg-amber-950/30 text-amber-200 shadow-[0_0_20px_rgba(245,158,11,0.2)]'
+            : 'border-amber-500/30 bg-amber-950/20 text-amber-200 shadow-[0_0_20px_rgba(212,175,55,0.15)]'
+        }`}
       >
-        <Flame className="w-3.5 h-3.5 text-amber-400 animate-pulse" />
-        An Interactive Digital Sanctuary for Football Lore
+        {isHalloween ? (
+          <Ghost className="w-3.5 h-3.5 text-purple-400 animate-bounce" />
+        ) : (
+          <Flame className="w-3.5 h-3.5 text-amber-400 animate-pulse" />
+        )}
+        {isHalloween ? "All Hallows' Eve • Spectral Sanctuary for Football Lore 🎃" : "An Interactive Digital Sanctuary for Football Lore"}
       </motion.div>
 
       {/* Main Cinematic Typography */}
@@ -100,7 +121,13 @@ export const HomeHero: React.FC<HomeHeroProps> = ({
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 0.9 }}
-          className="w-full max-w-2xl mt-12 mb-4 p-5 rounded-2xl border border-amber-400/25 bg-gradient-to-r from-[#0C1428]/80 via-[#0E1B38]/70 to-[#0C1428]/80 backdrop-blur-xl shadow-[0_10px_35px_rgba(0,0,0,0.8)] text-left flex flex-col sm:flex-row items-center justify-between gap-4"
+          className={`w-full max-w-2xl mt-12 mb-4 p-5 rounded-2xl border backdrop-blur-xl shadow-[0_10px_35px_rgba(0,0,0,0.8)] text-left flex flex-col sm:flex-row items-center justify-between gap-4 transition-colors ${
+            isHalloween
+              ? 'border-purple-500/35 bg-gradient-to-r from-[#1A0D2D]/85 via-[#25103E]/75 to-[#1A0D2D]/85 shadow-[0_10px_35px_rgba(168,85,247,0.25)]'
+              : isDarkroom
+              ? 'border-amber-500/30 bg-gradient-to-r from-[#1C140F]/85 via-[#261A12]/75 to-[#1C140F]/85'
+              : 'border-amber-400/25 bg-gradient-to-r from-[#0C1428]/80 via-[#0E1B38]/70 to-[#0C1428]/80'
+          }`}
         >
           <div className="space-y-1.5 flex-1 min-w-0">
             <div className="flex items-center gap-2">
