@@ -4,7 +4,13 @@
 > **“Football remembers the scores. GHOSTLIGHT remembers the people.”**  
 > *The final whistle is not the end of a memory.*
 
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Render-46E3B7?style=for-the-badge&logo=render&logoColor=black)](https://ghostlight-stadium-of-echoes.onrender.com)
+[![GitHub License](https://img.shields.io/badge/License-MIT-E5C158?style=for-the-badge)](LICENSE)
+[![Model](https://img.shields.io/badge/Local%20AI-Gemma%203%204B-9333EA?style=for-the-badge)](https://ollama.com/library/gemma3)
+
 ![GHOSTLIGHT: Stadium of Echoes Cover](public/cover.png)
+
+🔗 **Experience the Live Cloud Showcase:** [ghostlight-stadium-of-echoes.onrender.com](https://ghostlight-stadium-of-echoes.onrender.com)
 
 An interactive digital museum and sensory installation where forgotten football memories come back to life through locally running open-weight artificial intelligence (**Google Gemma 3 4B** via **Ollama**).
 

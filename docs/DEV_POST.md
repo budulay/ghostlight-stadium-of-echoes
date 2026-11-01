@@ -12,6 +12,9 @@ description: "A cinematic, interactive digital museum where forgotten football m
 
 > **"Where memories never die."**
 
+🏟️ **Live Showcase:** [https://ghostlight-stadium-of-echoes.onrender.com](https://ghostlight-stadium-of-echoes.onrender.com)  
+📦 **Source Code (GitHub):** [https://github.com/budulay/ghostlight-stadium-of-echoes](https://github.com/budulay/ghostlight-stadium-of-echoes)
+
 ---
 
 A football match lasts 90 minutes.  
@@ -288,9 +291,9 @@ The long-term ambition is to give communities the tools to preserve the human st
 ## Try It Yourself
 
 - **Project**: GHOSTLIGHT: Stadium of Echoes
-- **Source Code**: `[INSERT YOUR GITHUB REPOSITORY URL]`
-- **Demo Video**: `[INSERT YOUR 90-SECOND DEMO VIDEO URL]`
-- **Cover Image**: Included in `public/cover.png`
+- **Live Demo**: [https://ghostlight-stadium-of-echoes.onrender.com](https://ghostlight-stadium-of-echoes.onrender.com)
+- **Source Code**: [https://github.com/budulay/ghostlight-stadium-of-echoes](https://github.com/budulay/ghostlight-stadium-of-echoes)
+- **Cover Image**: [https://raw.githubusercontent.com/budulay/ghostlight-stadium-of-echoes/main/public/cover.png](https://raw.githubusercontent.com/budulay/ghostlight-stadium-of-echoes/main/public/cover.png)
 
 ### Running Locally:
 
