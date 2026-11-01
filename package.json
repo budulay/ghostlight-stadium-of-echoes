@@ -10,7 +10,8 @@
     "client": "vite",
     "server": "tsx watch server/index.ts",
     "start": "tsx server/index.ts",
-    "build": "vite build",
+    "build": "node scripts/build.js",
+    "build:client": "vite build",
     "preview": "vite preview"
   },
   "dependencies": {
