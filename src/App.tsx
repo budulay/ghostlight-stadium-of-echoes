@@ -13,8 +13,7 @@ import { AboutModal } from './components/AboutModal';
 import {
   HealthStatus,
   StoredMemory,
-  MemorySubmission,
-  AnalyzedMemory
+  MemorySubmission
 } from './types/memory';
 import {
   fetchHealth,
@@ -29,6 +28,7 @@ import {
   seedSampleMemoriesIfEmpty
 } from './services/db';
 import { allocateStadiumSeat } from './services/seatAllocator';
+import { ghostNarrator } from './services/speech';
 import { SAMPLE_MEMORIES } from '../server/sampleData';
 
 export function App() {
@@ -37,6 +37,7 @@ export function App() {
   const [activeRevealMemory, setActiveRevealMemory] = useState<StoredMemory | null>(null);
   const [isNewAwakening, setIsNewAwakening] = useState(false);
   const [lastProcessedBy, setLastProcessedBy] = useState<string>('ollama_gemma3');
+  const [weather, setWeather] = useState<'fog' | 'rain'>('fog');
 
   // Modals & Overlays
   const [isCreateOpen, setIsCreateOpen] = useState(false);
@@ -54,17 +55,14 @@ export function App() {
   // Initialize DB and Health
   useEffect(() => {
     async function init() {
-      // 1. Fetch Health
       const h = await fetchHealth();
       setHealth(h);
 
-      // 2. Fetch server samples or local fallbacks
       let samples = await fetchServerSampleMemories();
       if (!samples || samples.length === 0) {
         samples = SAMPLE_MEMORIES;
       }
 
-      // 3. Seed IDB if empty
       const stored = await seedSampleMemoriesIfEmpty(samples);
       setMemories(stored);
     }
@@ -77,6 +75,12 @@ export function App() {
     setHealth(h);
   };
 
+  const handleToggleWeather = () => {
+    const newWeather = weather === 'fog' ? 'rain' : 'fog';
+    setWeather(newWeather);
+    ghostNarrator.setWeather(newWeather);
+  };
+
   // Launch AI Seance Workflow
   const handleStartSeance = async (submission: MemorySubmission, allowFallback = false) => {
     setCurrentSubmission(submission);
@@ -84,7 +88,6 @@ export function App() {
     setIsSeanceActive(true);
     setSeanceError(null);
 
-    // Call backend API
     const result = await submitMemoryForAnalysis(
       {
         memoryText: submission.memoryText,
@@ -97,7 +100,6 @@ export function App() {
     );
 
     if (result.success && result.data) {
-      // Create permanent memory record
       const seat = allocateStadiumSeat(memories.length);
       const newMemory: StoredMemory = {
         ...result.data,
@@ -115,18 +117,15 @@ export function App() {
         isDemo: false,
       };
 
-      // Save to IndexedDB
       await saveMemoryToDB(newMemory);
       setMemories((prev) => [newMemory, ...prev]);
 
-      // Transition to reveal
       setLastProcessedBy(result.processedBy || 'ollama_gemma3');
       setActiveRevealMemory(newMemory);
       setIsNewAwakening(true);
       setIsSeanceActive(false);
       setCurrentView('reveal');
     } else {
-      // Ollama connection failure or processing error
       setSeanceError(result);
     }
   };
@@ -156,11 +155,12 @@ export function App() {
 
   return (
     <div className="relative min-h-screen bg-[#04060B] text-slate-100 flex flex-col font-sans selection:bg-amber-400/30 selection:text-amber-100">
-      {/* Dynamic Cinematic Background with Lights & Mist */}
+      {/* Dynamic Cinematic Background with Lights, Mist & Weather */}
       <StadiumBackground
         intensity={
           isSeanceActive ? 'seance' : currentView === 'reveal' ? 'awakened' : 'subtle'
         }
+        weather={weather}
       />
 
       {/* Top Navbar */}
@@ -175,6 +175,8 @@ export function App() {
         }}
         memoryCount={memories.length}
         health={health}
+        weather={weather}
+        onToggleWeather={handleToggleWeather}
         onOpenOllamaModal={() => setIsOllamaModalOpen(true)}
         onOpenAboutModal={() => setIsAboutModalOpen(true)}
       />
@@ -230,6 +232,7 @@ export function App() {
                 onOpenMemory={handleOpenMemoryFromList}
                 onDeleteMemory={handleDeleteMemory}
                 onAwakenClick={() => setIsCreateOpen(true)}
+                onCapsuleImported={(updatedList) => setMemories(updatedList)}
               />
             </motion.div>
           )}

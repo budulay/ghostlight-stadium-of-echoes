@@ -1,10 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 
-export const StadiumBackground: React.FC<{ intensity?: 'subtle' | 'awakened' | 'seance' }> = ({
+interface StadiumBackgroundProps {
+  intensity?: 'subtle' | 'awakened' | 'seance';
+  weather?: 'fog' | 'rain';
+}
+
+export const StadiumBackground: React.FC<StadiumBackgroundProps> = ({
   intensity = 'subtle',
+  weather = 'fog',
 }) => {
   const [particles, setParticles] = useState<Array<{ id: number; x: number; y: number; size: number; duration: number; delay: number }>>([]);
+  const [raindrops, setRaindrops] = useState<Array<{ id: number; left: number; duration: number; delay: number; height: number; opacity: number }>>([]);
 
   useEffect(() => {
     // Generate atmospheric dust/light particles
@@ -17,10 +24,22 @@ export const StadiumBackground: React.FC<{ intensity?: 'subtle' | 'awakened' | '
       delay: Math.random() * 5,
     }));
     setParticles(generated);
+
+    // Generate rain streaks for torrential derby weather mode
+    const drops = Array.from({ length: 60 }).map((_, i) => ({
+      id: i,
+      left: Math.random() * 100,
+      duration: Math.random() * 0.4 + 0.4,
+      delay: Math.random() * 2,
+      height: Math.random() * 45 + 35,
+      opacity: Math.random() * 0.4 + 0.15,
+    }));
+    setRaindrops(drops);
   }, []);
 
   const isSeance = intensity === 'seance';
   const isAwakened = intensity === 'awakened';
+  const isRain = weather === 'rain';
 
   return (
     <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden bg-[#04060B]">
@@ -30,7 +49,7 @@ export const StadiumBackground: React.FC<{ intensity?: 'subtle' | 'awakened' | '
       {/* 2. Top Floodlight Beams Left & Right */}
       <motion.div
         animate={{
-          opacity: isSeance ? [0.3, 0.7, 0.4] : isAwakened ? 0.55 : 0.28,
+          opacity: isSeance ? [0.3, 0.7, 0.4] : isAwakened ? 0.55 : isRain ? 0.42 : 0.28,
           scaleY: isSeance ? [0.95, 1.05, 0.98] : 1,
         }}
         transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}
@@ -43,7 +62,7 @@ export const StadiumBackground: React.FC<{ intensity?: 'subtle' | 'awakened' | '
 
       <motion.div
         animate={{
-          opacity: isSeance ? [0.3, 0.7, 0.4] : isAwakened ? 0.55 : 0.28,
+          opacity: isSeance ? [0.3, 0.7, 0.4] : isAwakened ? 0.55 : isRain ? 0.42 : 0.28,
           scaleY: isSeance ? [0.98, 1.05, 0.95] : 1,
         }}
         transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
@@ -57,12 +76,14 @@ export const StadiumBackground: React.FC<{ intensity?: 'subtle' | 'awakened' | '
       {/* 3. Center Pitch Aura */}
       <motion.div
         animate={{
-          opacity: isAwakened ? 0.35 : isSeance ? 0.45 : 0.15,
+          opacity: isAwakened ? 0.35 : isSeance ? 0.45 : isRain ? 0.28 : 0.15,
         }}
         transition={{ duration: 2 }}
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[550px] rounded-[100%] pointer-events-none"
         style={{
-          background: 'radial-gradient(ellipse at center, rgba(30, 58, 110, 0.2) 0%, rgba(212, 175, 55, 0.05) 45%, transparent 75%)',
+          background: isRain
+            ? 'radial-gradient(ellipse at center, rgba(16, 45, 90, 0.35) 0%, rgba(212, 175, 55, 0.04) 45%, transparent 75%)'
+            : 'radial-gradient(ellipse at center, rgba(30, 58, 110, 0.2) 0%, rgba(212, 175, 55, 0.05) 45%, transparent 75%)',
           filter: 'blur(45px)',
         }}
       />
@@ -74,7 +95,6 @@ export const StadiumBackground: React.FC<{ intensity?: 'subtle' | 'awakened' | '
         preserveAspectRatio="none"
         fill="none"
       >
-        {/* Distant Grandstand tiers */}
         <path
           d="M 0 350 Q 720 280 1440 350 L 1440 400 L 0 400 Z"
           fill="#080E1C"
@@ -103,9 +123,6 @@ export const StadiumBackground: React.FC<{ intensity?: 'subtle' | 'awakened' | '
           <line x1="140" y1="120" x2="180" y2="120" />
           <line x1="145" y1="180" x2="175" y2="180" />
           <line x1="150" y1="240" x2="170" y2="240" />
-          <line x1="140" y1="120" x2="175" y2="180" />
-          <line x1="180" y1="120" x2="145" y2="180" />
-          {/* Floodlight bulbs bank */}
           <circle cx="160" cy="85" r="9" fill="#FFF8DE" opacity="0.8" />
           <circle cx="145" cy="88" r="5" fill="#FFF8DE" opacity="0.7" />
           <circle cx="175" cy="88" r="5" fill="#FFF8DE" opacity="0.7" />
@@ -117,16 +134,40 @@ export const StadiumBackground: React.FC<{ intensity?: 'subtle' | 'awakened' | '
           <line x1="1260" y1="120" x2="1300" y2="120" />
           <line x1="1265" y1="180" x2="1295" y2="180" />
           <line x1="1270" y1="240" x2="1290" y2="240" />
-          <line x1="1260" y1="120" x2="1295" y2="180" />
-          <line x1="1300" y1="120" x2="1265" y2="180" />
-          {/* Floodlight bulbs bank */}
           <circle cx="1280" cy="85" r="9" fill="#FFF8DE" opacity="0.8" />
           <circle cx="1265" cy="88" r="5" fill="#FFF8DE" opacity="0.7" />
           <circle cx="1295" cy="88" r="5" fill="#FFF8DE" opacity="0.7" />
         </g>
       </svg>
 
-      {/* 5. Rolling Atmospheric Fog */}
+      {/* 5. Rain Derby Simulation (When rain weather is active) */}
+      {isRain && (
+        <div className="absolute inset-0 pointer-events-none overflow-hidden z-10">
+          {raindrops.map((d) => (
+            <motion.div
+              key={d.id}
+              initial={{ y: -80, x: `${d.left}vw` }}
+              animate={{ y: '110vh', x: `${d.left - 6}vw` }}
+              transition={{
+                duration: d.duration,
+                repeat: Infinity,
+                delay: d.delay,
+                ease: 'linear',
+              }}
+              className="absolute w-[1.5px] bg-gradient-to-b from-transparent via-amber-200/50 to-amber-100/70"
+              style={{
+                height: `${d.height}px`,
+                opacity: d.opacity,
+                transform: 'rotate(15deg)',
+              }}
+            />
+          ))}
+          {/* Wet pitch water sheen reflection */}
+          <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-cyan-950/20 via-transparent to-transparent pointer-events-none" />
+        </div>
+      )}
+
+      {/* 6. Rolling Atmospheric Fog */}
       <div
         className="absolute inset-x-0 bottom-0 h-64 pointer-events-none opacity-40 animate-fog-slow"
         style={{
@@ -142,30 +183,31 @@ export const StadiumBackground: React.FC<{ intensity?: 'subtle' | 'awakened' | '
         }}
       />
 
-      {/* 6. Floating Memory Dust Particles */}
-      {particles.map((p) => (
-        <motion.div
-          key={p.id}
-          initial={{ opacity: 0, y: `${p.y}%`, x: `${p.x}%` }}
-          animate={{
-            opacity: [0, 0.7, 0],
-            y: [`${p.y}%`, `${(p.y - 18 + 100) % 100}%`],
-            x: [`${p.x}%`, `${(p.x + (p.id % 2 === 0 ? 3 : -3) + 100) % 100}%`],
-          }}
-          transition={{
-            duration: p.duration,
-            repeat: Infinity,
-            delay: p.delay,
-            ease: 'linear',
-          }}
-          className="absolute rounded-full bg-amber-100/70 pointer-events-none"
-          style={{
-            width: `${p.size}px`,
-            height: `${p.size}px`,
-            boxShadow: '0 0 6px 1px rgba(245, 215, 127, 0.4)',
-          }}
-        />
-      ))}
+      {/* 7. Floating Memory Dust / Embers */}
+      {!isRain &&
+        particles.map((p) => (
+          <motion.div
+            key={p.id}
+            initial={{ opacity: 0, y: `${p.y}%`, x: `${p.x}%` }}
+            animate={{
+              opacity: [0, 0.7, 0],
+              y: [`${p.y}%`, `${(p.y - 18 + 100) % 100}%`],
+              x: [`${p.x}%`, `${(p.x + (p.id % 2 === 0 ? 3 : -3) + 100) % 100}%`],
+            }}
+            transition={{
+              duration: p.duration,
+              repeat: Infinity,
+              delay: p.delay,
+              ease: 'linear',
+            }}
+            className="absolute rounded-full bg-amber-100/70 pointer-events-none"
+            style={{
+              width: `${p.size}px`,
+              height: `${p.size}px`,
+              boxShadow: '0 0 6px 1px rgba(245, 215, 127, 0.4)',
+            }}
+          />
+        ))}
     </div>
   );
 };

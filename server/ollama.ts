@@ -2,7 +2,7 @@ import { AnalyzedMemory, HealthStatus } from '../src/types/memory.js';
 
 const OLLAMA_HOST = process.env.OLLAMA_HOST || 'http://localhost:11434';
 const GEMMA_MODEL = process.env.GEMMA_MODEL || 'gemma3:4b';
-const REQUEST_TIMEOUT_MS = 60000; // 60 seconds for local LLM inference
+const REQUEST_TIMEOUT_MS = 180000; // 180 seconds for local LLM inference on CPU/GPU
 
 export async function checkOllamaHealth(): Promise<HealthStatus['ollama']> {
   try {
@@ -66,15 +66,15 @@ STRICT EDITORIAL & ETHICAL RULES:
 
 You MUST output ONLY a valid JSON object matching this exact schema:
 {
-  "title": "A short, evocative, poetic exhibit title (uppercase or title case)",
-  "year": 1998, // or null if unknown or not stated
-  "theme": "The core thematic soul of the memory (e.g. 'Generational Reverence', 'The Communion of Rain', 'Unbroken Vigil')",
-  "emotion": "Primary emotional frequency (e.g. 'Awe & Yearning', 'Melancholy Ecstasy')",
-  "story": "A beautifully written, 3 to 5 sentence cinematic narrative of the memory. Honor the atmosphere—floodlights, cold mist, roaring stands, hands held, silence, and echoes. Grounded purely in what the user provided without fabricating players or outcomes.",
-  "epitaph": "A poignant closing inscription (1 sentence, e.g. 'Some matches end. Some memories never do.')",
-  "tags": ["Array", "of", "4-6", "thematic", "keywords"],
+  "title": "Evocative exhibit title in uppercase or title case",
+  "year": 1998,
+  "theme": "Core thematic soul as a descriptive string (e.g. Generational Reverence, The Communion of Rain)",
+  "emotion": "Primary emotional frequency as a string (e.g. Deep Nostalgia, Melancholy Wonder)",
+  "story": "A beautifully written 3 to 5 sentence cinematic narrative of the memory. Grounded purely in what the user provided without fabricating players or match outcomes.",
+  "epitaph": "A poignant closing inscription (e.g. Some matches end. Some memories never do.)",
+  "tags": ["Array", "of", "4-6", "keywords"],
   "known_facts": ["List of distinct factual details explicitly confirmed in the user submission"],
-  "unknowns": ["List of missing or unrecorded details lost to time (e.g. specific opponent, final score, exact ground, etc.)"]
+  "unknowns": ["List of missing or unrecorded details lost to time"]
 }`;
 
 export async function analyzeMemoryWithOllama(input: {
@@ -184,8 +184,13 @@ function validateAndNormalizeResponse(
     year = Number(input.year);
   }
 
-  const theme = (data.theme && typeof data.theme === 'string') || 'Echoes in the Turnstile';
-  const emotion = (data.emotion && typeof data.emotion === 'string') || 'Solemn Reverence & Nostalgia';
+  const theme = typeof data.theme === 'string' && data.theme.trim()
+    ? data.theme.trim()
+    : 'Generational Reverence & Echoes';
+
+  const emotion = typeof data.emotion === 'string' && data.emotion.trim()
+    ? data.emotion.trim()
+    : 'Deep Nostalgia & Sacred Bond';
   const story = (data.story && typeof data.story === 'string' && data.story.trim()) || input.memoryText;
   const epitaph = (data.epitaph && typeof data.epitaph === 'string' && data.epitaph.trim()) ||
     'Some matches end. Some memories never do.';

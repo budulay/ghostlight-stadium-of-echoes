@@ -1,5 +1,5 @@
 import React from 'react';
-import { Volume2, VolumeX, Sparkles, BookOpen, MapPin, Plus, Cpu, Info } from 'lucide-react';
+import { Volume2, VolumeX, Sparkles, BookOpen, MapPin, Plus, Cpu, Info, CloudRain, CloudFog } from 'lucide-react';
 import { HealthStatus } from '../types/memory';
 import { ghostNarrator } from '../services/speech';
 
@@ -8,6 +8,8 @@ interface NavbarProps {
   onNavigate: (view: 'home' | 'stadium' | 'museum' | 'create') => void;
   memoryCount: number;
   health: HealthStatus | null;
+  weather: 'fog' | 'rain';
+  onToggleWeather: () => void;
   onOpenOllamaModal: () => void;
   onOpenAboutModal: () => void;
 }
@@ -17,6 +19,8 @@ export const Navbar: React.FC<NavbarProps> = ({
   onNavigate,
   memoryCount,
   health,
+  weather,
+  onToggleWeather,
   onOpenOllamaModal,
   onOpenAboutModal,
 }) => {
@@ -97,6 +101,22 @@ export const Navbar: React.FC<NavbarProps> = ({
 
         {/* Right side controls */}
         <div className="flex items-center gap-2 sm:gap-3">
+          {/* Weather Toggle (Midnight Fog vs Downpour Derby) */}
+          <button
+            onClick={onToggleWeather}
+            title={weather === 'rain' ? 'Switch to Midnight Mist (Current: Torrential Rain)' : 'Switch to Torrential Rain Derby (Current: Midnight Mist)'}
+            className={`p-2 rounded-lg border transition-all text-xs font-mono flex items-center gap-1.5 ${
+              weather === 'rain'
+                ? 'bg-blue-950/50 border-blue-400/40 text-blue-300 shadow-[0_0_15px_rgba(59,130,246,0.3)]'
+                : 'border-slate-800 bg-slate-900/50 text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            {weather === 'rain' ? <CloudRain className="w-4 h-4 animate-pulse text-blue-400" /> : <CloudFog className="w-4 h-4 text-amber-300/80" />}
+            <span className="hidden lg:inline text-[10px] uppercase">
+              {weather === 'rain' ? 'Rain Derby' : 'Mist'}
+            </span>
+          </button>
+
           {/* Local AI Model Status Pill */}
           <button
             onClick={onOpenOllamaModal}

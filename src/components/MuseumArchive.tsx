@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Search,
@@ -11,16 +11,22 @@ import {
   MapPin,
   Heart,
   Eye,
-  FileText
+  Ticket,
+  Upload,
+  Archive,
+  CheckCircle2
 } from 'lucide-react';
 import { StoredMemory } from '../types/memory';
 import { downloadMemoryCardImage, exportMemoryAsJSON } from '../services/exportCard';
+import { downloadMatchdayTicketImage } from '../services/exportTicket';
+import { exportTimeCapsule, importTimeCapsule } from '../services/capsule';
 
 interface MuseumArchiveProps {
   memories: StoredMemory[];
   onOpenMemory: (memory: StoredMemory) => void;
   onDeleteMemory: (id: string) => void;
   onAwakenClick: () => void;
+  onCapsuleImported: (updatedList: StoredMemory[]) => void;
 }
 
 export const MuseumArchive: React.FC<MuseumArchiveProps> = ({
@@ -28,10 +34,14 @@ export const MuseumArchive: React.FC<MuseumArchiveProps> = ({
   onOpenMemory,
   onDeleteMemory,
   onAwakenClick,
+  onCapsuleImported,
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedDecade, setSelectedDecade] = useState<string>('all');
   const [memoryToDelete, setMemoryToDelete] = useState<StoredMemory | null>(null);
+  const [importNotification, setImportNotification] = useState<string | null>(null);
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Filter memories
   const filteredMemories = memories.filter((m) => {
@@ -58,10 +68,27 @@ export const MuseumArchive: React.FC<MuseumArchiveProps> = ({
     return matchesSearch && matchesDecade;
   });
 
+  const handleImportFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const res = await importTimeCapsule(file);
+    if (res.success) {
+      onCapsuleImported(res.totalMemories);
+      setImportNotification(`Successfully restored ${res.importedCount} memories into your stadium archive!`);
+      setTimeout(() => setImportNotification(null), 4000);
+    } else {
+      setImportNotification(res.error || 'Failed to import capsule.');
+      setTimeout(() => setImportNotification(null), 4000);
+    }
+    // reset input
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
       {/* Archive Header */}
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-amber-500/15 pb-6">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-amber-500/15 pb-6">
         <div>
           <div className="text-[11px] font-mono tracking-widest text-amber-300 uppercase">
             Permanent Sanctuary Archive
@@ -74,14 +101,56 @@ export const MuseumArchive: React.FC<MuseumArchiveProps> = ({
           </p>
         </div>
 
-        <button
-          onClick={onAwakenClick}
-          className="px-4 py-2.5 rounded-xl font-cinzel text-xs font-bold tracking-wider uppercase bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 shadow-[0_0_20px_rgba(212,175,55,0.3)] hover:brightness-110 active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer self-start sm:self-auto"
-        >
-          <Sparkles className="w-4 h-4 text-slate-950" />
-          Awaken A Memory
-        </button>
+        {/* Capsule Tools & Awaken CTA */}
+        <div className="flex flex-wrap items-center gap-2">
+          {/* Hidden File Input for Capsule Import */}
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".json,.ghostlight.json"
+            onChange={handleImportFile}
+            className="hidden"
+          />
+
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            title="Import a .ghostlight.json archive file"
+            className="px-3.5 py-2.5 rounded-xl font-cinzel text-xs font-semibold tracking-wider uppercase border border-slate-700 bg-slate-900/60 text-slate-300 hover:text-white hover:border-slate-500 transition-all flex items-center gap-1.5 cursor-pointer"
+          >
+            <Upload className="w-3.5 h-3.5 text-amber-400" />
+            Import Capsule
+          </button>
+
+          <button
+            onClick={() => exportTimeCapsule(memories)}
+            title="Export all memories as a .ghostlight.json capsule backup"
+            className="px-3.5 py-2.5 rounded-xl font-cinzel text-xs font-semibold tracking-wider uppercase border border-amber-400/30 bg-amber-950/20 text-amber-200 hover:bg-amber-950/40 transition-all flex items-center gap-1.5 cursor-pointer"
+          >
+            <Archive className="w-3.5 h-3.5 text-amber-400" />
+            Export Capsule
+          </button>
+
+          <button
+            onClick={onAwakenClick}
+            className="px-4 py-2.5 rounded-xl font-cinzel text-xs font-bold tracking-wider uppercase bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 shadow-[0_0_20px_rgba(212,175,55,0.3)] hover:brightness-110 active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer"
+          >
+            <Sparkles className="w-4 h-4 text-slate-950" />
+            Awaken Memory
+          </button>
+        </div>
       </div>
+
+      {/* Import Notification Banner */}
+      {importNotification && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="p-3.5 rounded-xl bg-amber-950/40 border border-amber-400/40 text-amber-200 text-xs flex items-center gap-2"
+        >
+          <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+          <span>{importNotification}</span>
+        </motion.div>
+      )}
 
       {/* Filter and Search Bar */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
@@ -205,6 +274,14 @@ export const MuseumArchive: React.FC<MuseumArchiveProps> = ({
                 </button>
 
                 <div className="flex items-center gap-1">
+                  <button
+                    onClick={() => downloadMatchdayTicketImage(m)}
+                    title="Download Matchday Ticket (PNG)"
+                    className="p-1.5 rounded-lg text-slate-400 hover:text-amber-300 hover:bg-slate-800 transition-colors"
+                  >
+                    <Ticket className="w-3.5 h-3.5 text-amber-400" />
+                  </button>
+
                   <button
                     onClick={() => downloadMemoryCardImage(m)}
                     title="Download Archival Card (PNG)"

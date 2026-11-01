@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, MapPin, Eye, Flame, Compass, Filter, Calendar } from 'lucide-react';
+import { Sparkles, MapPin, Eye, Flame, Compass, Filter, Calendar, Share2, GitBranch } from 'lucide-react';
 import { StoredMemory } from '../types/memory';
 
 interface LivingStadiumProps {
@@ -18,12 +18,48 @@ export const LivingStadium: React.FC<LivingStadiumProps> = ({
 }) => {
   const [hoveredMemory, setHoveredMemory] = useState<StoredMemory | null>(null);
   const [selectedStand, setSelectedStand] = useState<string>('all');
+  const [showConstellations, setShowConstellations] = useState(true);
 
   const filteredMemories = selectedStand === 'all'
     ? memories
     : memories.filter((m) => m.seatLocation.stand === selectedStand);
 
   const luminosityPercent = Math.min(100, Math.round((memories.length / 50) * 100));
+
+  // Compute Constellation Links (Echo Threads) between memories sharing era or themes
+  const constellationLinks: Array<{ from: StoredMemory; to: StoredMemory; reason: string }> = [];
+  if (showConstellations && memories.length > 1) {
+    for (let i = 0; i < memories.length; i++) {
+      for (let j = i + 1; j < memories.length; j++) {
+        const m1 = memories[i];
+        const m2 = memories[j];
+
+        // Link if same club
+        if (
+          m1.originalInput.club &&
+          m2.originalInput.club &&
+          m1.originalInput.club.toLowerCase() === m2.originalInput.club.toLowerCase()
+        ) {
+          constellationLinks.push({ from: m1, to: m2, reason: `Club Bond: ${m1.originalInput.club}` });
+        }
+        // Link if same decade
+        else if (
+          m1.year &&
+          m2.year &&
+          Math.floor(m1.year / 10) === Math.floor(m2.year / 10)
+        ) {
+          constellationLinks.push({ from: m1, to: m2, reason: `Era Bond: ${Math.floor(m1.year / 10)}0s` });
+        }
+        // Link if shared emotional keyword
+        else if (
+          m1.emotion.toLowerCase().includes('nostalgia') &&
+          m2.emotion.toLowerCase().includes('nostalgia')
+        ) {
+          constellationLinks.push({ from: m1, to: m2, reason: 'Nostalgic Resonance' });
+        }
+      }
+    }
+  }
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
@@ -42,8 +78,8 @@ export const LivingStadium: React.FC<LivingStadiumProps> = ({
           </p>
         </div>
 
-        {/* Luminosity & Stats Widget */}
-        <div className="flex items-center gap-4 bg-slate-950/80 border border-amber-400/25 p-3 sm:p-4 rounded-2xl backdrop-blur-md">
+        {/* Luminosity & Controls Widget */}
+        <div className="flex flex-wrap items-center gap-3 bg-slate-950/80 border border-amber-400/25 p-3 sm:p-4 rounded-2xl backdrop-blur-md">
           <div className="space-y-1">
             <div className="text-[10px] font-mono tracking-wider text-slate-400 uppercase">
               Sanctuary Luminosity
@@ -65,6 +101,20 @@ export const LivingStadium: React.FC<LivingStadiumProps> = ({
             </div>
           </div>
 
+          {/* Toggle Echo Threads */}
+          <button
+            onClick={() => setShowConstellations(!showConstellations)}
+            title="Toggle glowing constellation threads between related memories"
+            className={`px-3 py-2 rounded-xl text-xs font-mono border transition-all flex items-center gap-1.5 cursor-pointer ${
+              showConstellations
+                ? 'bg-amber-500/20 text-amber-300 border-amber-400/50 shadow-[0_0_15px_rgba(212,175,55,0.25)]'
+                : 'bg-slate-900 border-slate-700 text-slate-400 hover:text-white'
+            }`}
+          >
+            <GitBranch className="w-3.5 h-3.5" />
+            <span>Echo Threads</span>
+          </button>
+
           <button
             onClick={onAwakenClick}
             className="px-3.5 py-2.5 rounded-xl text-xs font-cinzel font-bold tracking-wider uppercase bg-amber-400/20 text-amber-200 border border-amber-400/40 hover:bg-amber-400 hover:text-slate-950 transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap"
@@ -76,24 +126,33 @@ export const LivingStadium: React.FC<LivingStadiumProps> = ({
       </div>
 
       {/* Stand Filter Tabs */}
-      <div className="flex flex-wrap items-center gap-2">
-        <span className="text-xs font-cinzel text-slate-400 mr-2 flex items-center gap-1.5">
-          <Filter className="w-3.5 h-3.5 text-amber-400" />
-          Filter Stand:
-        </span>
-        {['all', 'North Stand', 'South Stand', 'East Stand', 'West Stand'].map((stand) => (
-          <button
-            key={stand}
-            onClick={() => setSelectedStand(stand)}
-            className={`px-3 py-1 rounded-lg text-xs font-sans tracking-wide transition-all cursor-pointer ${
-              selectedStand === stand
-                ? 'bg-amber-500/20 text-amber-300 border border-amber-400/40 font-medium shadow-[0_0_10px_rgba(212,175,55,0.2)]'
-                : 'text-slate-400 bg-slate-900/60 border border-slate-800 hover:text-white'
-            }`}
-          >
-            {stand === 'all' ? 'Entire Stadium' : stand}
-          </button>
-        ))}
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-xs font-cinzel text-slate-400 mr-2 flex items-center gap-1.5">
+            <Filter className="w-3.5 h-3.5 text-amber-400" />
+            Filter Stand:
+          </span>
+          {['all', 'North Stand', 'South Stand', 'East Stand', 'West Stand'].map((stand) => (
+            <button
+              key={stand}
+              onClick={() => setSelectedStand(stand)}
+              className={`px-3 py-1 rounded-lg text-xs font-sans tracking-wide transition-all cursor-pointer ${
+                selectedStand === stand
+                  ? 'bg-amber-500/20 text-amber-300 border border-amber-400/40 font-medium shadow-[0_0_10px_rgba(212,175,55,0.2)]'
+                  : 'text-slate-400 bg-slate-900/60 border border-slate-800 hover:text-white'
+              }`}
+            >
+              {stand === 'all' ? 'Entire Stadium' : stand}
+            </button>
+          ))}
+        </div>
+
+        {constellationLinks.length > 0 && showConstellations && (
+          <div className="text-xs font-mono text-amber-300/80 flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded-full bg-amber-400" />
+            <span>{constellationLinks.length} Active Echo Constellations</span>
+          </div>
+        )}
       </div>
 
       {/* Interactive Stadium Pitch & Grandstands Floorplan */}
@@ -191,7 +250,6 @@ export const LivingStadium: React.FC<LivingStadiumProps> = ({
             strokeWidth="1.2"
             strokeOpacity="0.3"
           />
-          {/* Goal Box Left */}
           <rect
             x="220"
             y="275"
@@ -212,7 +270,6 @@ export const LivingStadium: React.FC<LivingStadiumProps> = ({
             strokeWidth="1.2"
             strokeOpacity="0.3"
           />
-          {/* Goal Box Right */}
           <rect
             x="740"
             y="275"
@@ -274,6 +331,31 @@ export const LivingStadium: React.FC<LivingStadiumProps> = ({
           >
             EAST TERRACE
           </text>
+
+          {/* SVG Echo Threads (Constellation Arcs) */}
+          {showConstellations &&
+            constellationLinks.map((link, idx) => {
+              const x1 = (link.from.seatLocation.x / 100) * 1000;
+              const y1 = (link.from.seatLocation.y / 100) * 650;
+              const x2 = (link.to.seatLocation.x / 100) * 1000;
+              const y2 = (link.to.seatLocation.y / 100) * 650;
+              const midX = (x1 + x2) / 2;
+              const midY = (y1 + y2) / 2 - 40; // Arc curvature
+
+              return (
+                <g key={idx}>
+                  <path
+                    d={`M ${x1} ${y1} Q ${midX} ${midY} ${x2} ${y2}`}
+                    fill="none"
+                    stroke="#F5D77F"
+                    strokeWidth="1.2"
+                    strokeOpacity="0.35"
+                    strokeDasharray="4 6"
+                  />
+                  <circle cx={midX} cy={midY} r="2" fill="#D4AF37" fillOpacity="0.6" />
+                </g>
+              );
+            })}
         </svg>
 
         {/* Illuminated Memory Seats */}
