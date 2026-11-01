@@ -1,0 +1,123 @@
+@import "tailwindcss";
+
+@theme {
+  --font-cinzel: "Cinzel", serif;
+  --font-serif: "Cormorant Garamond", Georgia, serif;
+  --font-sans: "Plus Jakarta Sans", system-ui, sans-serif;
+  
+  --color-ghost-black: #04060B;
+  --color-ghost-navy: #080D1A;
+  --color-ghost-deep: #0C152B;
+  --color-ghost-surface: #101B35;
+  --color-ghost-card: rgba(13, 22, 42, 0.7);
+  --color-ghost-border: rgba(212, 175, 55, 0.15);
+  
+  --color-gold-bright: #F5D77F;
+  --color-gold-primary: #D4AF37;
+  --color-gold-muted: #997B28;
+  --color-gold-dark: #4D3B0E;
+}
+
+@layer base {
+  * {
+    border-color: rgba(212, 175, 55, 0.12);
+  }
+
+  body {
+    background-color: #04060B;
+    background-image: 
+      radial-gradient(ellipse 80% 50% at 50% -20%, rgba(20, 35, 70, 0.35), transparent 70%),
+      radial-gradient(ellipse 60% 40% at 50% 120%, rgba(212, 175, 55, 0.05), transparent 60%);
+    color: #E2E8F0;
+    font-family: var(--font-sans);
+    min-height: 100vh;
+  }
+}
+
+/* Custom glow and atmosphere utilities */
+.gold-glow {
+  box-shadow: 0 0 25px -5px rgba(212, 175, 55, 0.35), 0 0 10px -2px rgba(212, 175, 55, 0.2);
+}
+
+.gold-glow-intense {
+  box-shadow: 0 0 45px -5px rgba(212, 175, 55, 0.6), 0 0 20px 0px rgba(245, 215, 127, 0.4);
+}
+
+.floodlight-beam {
+  background: radial-gradient(ellipse at 50% 0%, rgba(245, 215, 127, 0.22) 0%, rgba(13, 30, 65, 0.08) 50%, transparent 80%);
+}
+
+.cinematic-glass {
+  background: rgba(10, 17, 34, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(212, 175, 55, 0.18);
+}
+
+.cinematic-glass-gold {
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.07) 0%, rgba(8, 14, 28, 0.85) 100%);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(212, 175, 55, 0.25);
+}
+
+.text-gold-gradient {
+  background: linear-gradient(135deg, #FFF6D6 0%, #E5C158 50%, #C5A059 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.text-silver-gradient {
+  background: linear-gradient(135deg, #FFFFFF 0%, #CBD5E1 60%, #94A3B8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Atmospheric mist animation */
+@keyframes fogDrift {
+  0% { transform: translateX(-5%) translateY(0); opacity: 0.25; }
+  50% { transform: translateX(5%) translateY(-8px); opacity: 0.45; }
+  100% { transform: translateX(-5%) translateY(0); opacity: 0.25; }
+}
+
+.animate-fog-slow {
+  animation: fogDrift 24s ease-in-out infinite;
+}
+
+.animate-fog-fast {
+  animation: fogDrift 16s ease-in-out infinite reverse;
+}
+
+/* Pulsing seat light */
+@keyframes seatPulse {
+  0%, 100% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 3px rgba(212, 175, 55, 0.7));
+    opacity: 0.85;
+  }
+  50% {
+    transform: scale(1.35);
+    filter: drop-shadow(0 0 10px rgba(245, 215, 127, 0.95));
+    opacity: 1;
+  }
+}
+
+.animate-seat-glow {
+  animation: seatPulse 3.5s ease-in-out infinite;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #04060B;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(212, 175, 55, 0.25);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(212, 175, 55, 0.45);
+}
