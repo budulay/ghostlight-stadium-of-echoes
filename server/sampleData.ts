@@ -255,8 +255,8 @@ export const SAMPLE_MEMORIES: StoredMemory[] = [
       tier: "Lower Tier",
       sectorNumber: 4,
       seatNumber: 42,
-      x: 32,
-      y: 28
+      x: 36,
+      y: 16
     },
     isDemo: true
   },
@@ -293,7 +293,7 @@ export const SAMPLE_MEMORIES: StoredMemory[] = [
       sectorNumber: 7,
       seatNumber: 19,
       x: 68,
-      y: 72
+      y: 82
     },
     isDemo: true
   },
@@ -331,8 +331,8 @@ export const SAMPLE_MEMORIES: StoredMemory[] = [
       tier: "Lower Tier",
       sectorNumber: 11,
       seatNumber: 75,
-      x: 22,
-      y: 54
+      x: 14,
+      y: 48
     },
     isDemo: true
   },
@@ -369,8 +369,8 @@ export const SAMPLE_MEMORIES: StoredMemory[] = [
       tier: "Upper Tier",
       sectorNumber: 14,
       seatNumber: 99,
-      x: 78,
-      y: 76
+      x: 38,
+      y: 86
     },
     isDemo: true
   },
@@ -407,8 +407,8 @@ export const SAMPLE_MEMORIES: StoredMemory[] = [
       tier: "Terrace",
       sectorNumber: 3,
       seatNumber: 67,
-      x: 80,
-      y: 36
+      x: 86,
+      y: 42
     },
     isDemo: true
   }

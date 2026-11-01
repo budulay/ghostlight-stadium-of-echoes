@@ -32,24 +32,24 @@ export function allocateStadiumSeat(existingCount = 0): StadiumSeatLocation {
 
   switch (stand) {
     case 'North Stand':
-      // Top grandstand
-      x = 20 + ((existingCount * 17) % 60) + jitterX * 0.5;
-      y = tier === 'Upper Tier' ? 14 + jitterY * 0.3 : tier === 'Lower Tier' ? 24 + jitterY * 0.3 : 32 + jitterY * 0.3;
+      // Top grandstand rows (strictly above the pitch Y: 24.6%)
+      x = 24 + ((existingCount * 17) % 52) + (Math.sin(existingCount * 2.3) * 4);
+      y = tier === 'Upper Tier' ? 12 : tier === 'Lower Tier' ? 16 : 19.5;
       break;
     case 'South Stand':
-      // Bottom grandstand
-      x = 20 + ((existingCount * 19) % 60) + jitterX * 0.5;
-      y = tier === 'Upper Tier' ? 84 + jitterY * 0.3 : tier === 'Lower Tier' ? 74 + jitterY * 0.3 : 66 + jitterY * 0.3;
+      // Bottom grandstand rows (strictly below the pitch Y: 75.4%)
+      x = 24 + ((existingCount * 19) % 52) + (Math.sin(existingCount * 2.3) * 4);
+      y = tier === 'Upper Tier' ? 88 : tier === 'Lower Tier' ? 84 : 80.5;
       break;
     case 'West Stand':
-      // Left grandstand
-      x = tier === 'Upper Tier' ? 12 + jitterX * 0.3 : tier === 'Lower Tier' ? 20 + jitterX * 0.3 : 26 + jitterX * 0.3;
-      y = 28 + ((existingCount * 13) % 44) + jitterY * 0.5;
+      // Left grandstand rows (strictly to the left of pitch X: 22%)
+      x = tier === 'Upper Tier' ? 10 : tier === 'Lower Tier' ? 14 : 17.5;
+      y = 28 + ((existingCount * 13) % 44) + (Math.cos(existingCount * 1.7) * 4);
       break;
     case 'East Stand':
-      // Right grandstand
-      x = tier === 'Upper Tier' ? 88 + jitterX * 0.3 : tier === 'Lower Tier' ? 80 + jitterX * 0.3 : 74 + jitterX * 0.3;
-      y = 28 + ((existingCount * 23) % 44) + jitterY * 0.5;
+      // Right grandstand rows (strictly to the right of pitch X: 78%)
+      x = tier === 'Upper Tier' ? 90 : tier === 'Lower Tier' ? 86 : 82.5;
+      y = 28 + ((existingCount * 23) % 44) + (Math.cos(existingCount * 1.7) * 4);
       break;
   }
 

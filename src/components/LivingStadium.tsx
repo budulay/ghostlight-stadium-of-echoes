@@ -11,6 +11,31 @@ interface LivingStadiumProps {
   theme?: MuseumTheme;
 }
 
+function sanitizeSeatPosition(loc: StadiumSeatLocation): { x: number; y: number } {
+  let { x, y, stand } = loc;
+  // If coordinates encroach into the pitch (X: 20-80%, Y: 23-77%), snap them strictly into stand rows
+  if (x > 20 && x < 80 && y > 23 && y < 77) {
+    switch (stand) {
+      case 'North Stand':
+        y = 16;
+        break;
+      case 'South Stand':
+        y = 84;
+        break;
+      case 'West Stand':
+        x = 14;
+        break;
+      case 'East Stand':
+        x = 86;
+        break;
+      default:
+        y = 16;
+        break;
+    }
+  }
+  return { x, y };
+}
+
 export const LivingStadium: React.FC<LivingStadiumProps> = ({
   memories,
   onSelectMemory,
@@ -170,7 +195,7 @@ export const LivingStadium: React.FC<LivingStadiumProps> = ({
       </div>
 
       {/* Interactive Stadium Pitch & Grandstands Floorplan */}
-      <div className={`relative w-full aspect-[4/3] sm:aspect-[16/10] max-h-[700px] rounded-3xl border transition-colors duration-500 p-4 sm:p-8 overflow-hidden shadow-[0_20px_70px_rgba(0,0,0,0.95)] ${
+      <div className={`relative w-full rounded-3xl border transition-colors duration-500 p-3 sm:p-6 overflow-hidden shadow-[0_20px_70px_rgba(0,0,0,0.95)] flex items-center justify-center ${
         isHalloween
           ? 'border-purple-600/35 bg-gradient-to-b from-[#170B26] via-[#0D0616] to-[#170B26]'
           : isDarkroom
@@ -191,13 +216,15 @@ export const LivingStadium: React.FC<LivingStadiumProps> = ({
           isHalloween ? 'bg-purple-500/20' : isDarkroom ? 'bg-amber-500/15' : 'bg-amber-400/10'
         }`} />
 
-        {/* Stadium Architectural Overlay SVG */}
-        <svg
-          className={`w-full h-full ${isHalloween ? 'text-purple-500/25' : isDarkroom ? 'text-amber-500/25' : 'text-amber-500/15'}`}
-          viewBox="0 0 1000 650"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
+        {/* Stadium Exact 1000:650 Frame (Coordinates for SVG and Seats are 1:1 Locked) */}
+        <div className="relative w-full max-w-[1050px] aspect-[1000/650] select-none">
+          {/* Stadium Architectural Overlay SVG */}
+          <svg
+            className={`absolute inset-0 w-full h-full pointer-events-none ${isHalloween ? 'text-purple-500/25' : isDarkroom ? 'text-amber-500/25' : 'text-amber-500/15'}`}
+            viewBox="0 0 1000 650"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
           {/* Outer Stadium Perimeter Oval */}
           <rect
             x="30"
@@ -363,10 +390,12 @@ export const LivingStadium: React.FC<LivingStadiumProps> = ({
           {/* SVG Echo Threads (Constellation Arcs) */}
           {showConstellations &&
             constellationLinks.map((link, idx) => {
-              const x1 = (link.from.seatLocation.x / 100) * 1000;
-              const y1 = (link.from.seatLocation.y / 100) * 650;
-              const x2 = (link.to.seatLocation.x / 100) * 1000;
-              const y2 = (link.to.seatLocation.y / 100) * 650;
+              const pos1 = sanitizeSeatPosition(link.from.seatLocation);
+              const pos2 = sanitizeSeatPosition(link.to.seatLocation);
+              const x1 = (pos1.x / 100) * 1000;
+              const y1 = (pos1.y / 100) * 650;
+              const x2 = (pos2.x / 100) * 1000;
+              const y2 = (pos2.y / 100) * 650;
               const midX = (x1 + x2) / 2;
               const midY = (y1 + y2) / 2 - 40; // Arc curvature
 
@@ -391,14 +420,15 @@ export const LivingStadium: React.FC<LivingStadiumProps> = ({
           const isHighlighted = m.id === highlightedMemoryId;
           const isHovered = hoveredMemory?.id === m.id;
           const tributes = marigoldTributes[m.id] || 0;
+          const pos = sanitizeSeatPosition(m.seatLocation);
 
           return (
             <div
               key={m.id}
               className="absolute -translate-x-1/2 -translate-y-1/2 cursor-pointer z-20 group"
               style={{
-                left: `${m.seatLocation.x}%`,
-                top: `${m.seatLocation.y}%`,
+                left: `${pos.x}%`,
+                top: `${pos.y}%`,
               }}
               onMouseEnter={() => setHoveredMemory(m)}
               onMouseLeave={() => setHoveredMemory(null)}
@@ -452,8 +482,8 @@ export const LivingStadium: React.FC<LivingStadiumProps> = ({
                   : 'bg-[#090F20]/95 border border-amber-400/40'
               }`}
               style={{
-                left: `${Math.min(78, Math.max(22, hoveredMemory.seatLocation.x))}%`,
-                top: `${hoveredMemory.seatLocation.y > 60 ? hoveredMemory.seatLocation.y - 20 : hoveredMemory.seatLocation.y + 6}%`,
+                left: `${Math.min(82, Math.max(18, sanitizeSeatPosition(hoveredMemory.seatLocation).x))}%`,
+                top: `${sanitizeSeatPosition(hoveredMemory.seatLocation).y > 60 ? sanitizeSeatPosition(hoveredMemory.seatLocation).y - 20 : sanitizeSeatPosition(hoveredMemory.seatLocation).y + 6}%`,
                 transform: 'translateX(-50%)',
               }}
             >
@@ -495,6 +525,7 @@ export const LivingStadium: React.FC<LivingStadiumProps> = ({
             </motion.div>
           )}
         </AnimatePresence>
+        </div>
       </div>
 
       {/* Stadium Lore Description Footer */}
