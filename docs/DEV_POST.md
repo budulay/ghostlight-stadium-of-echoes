@@ -2,8 +2,8 @@
 title: "GHOSTLIGHT: Stadium of Echoes — Football Remembers the Scores. We Remember the People."
 published: true
 tags: ai, hacktoberfest, gemma, ollama, webdev, opensource
-cover_image: https://raw.githubusercontent.com/username/ghostlight-stadium-of-echoes/master/public/cover.png
-canonical_url: https://dev.to/username/ghostlight-stadium-of-echoes
+cover_image: https://raw.githubusercontent.com/budulay/ghostlight-stadium-of-echoes/main/public/cover.png
+canonical_url: https://dev.to/budulay/ghostlight-stadium-of-echoes
 description: "A cinematic, interactive digital museum where forgotten football memories come back to life through locally running open-weight AI (Gemma 3 4B)."
 ---
 
@@ -30,7 +30,7 @@ That’s the idea behind **GHOSTLIGHT: Stadium of Echoes** — a cinematic, inte
 
 ---
 
-![Hero — Forgotten Stadium](https://raw.githubusercontent.com/username/ghostlight-stadium-of-echoes/master/public/cover.png)
+![Hero — Forgotten Stadium](https://raw.githubusercontent.com/budulay/ghostlight-stadium-of-echoes/main/public/cover.png)
 *Hero: The Forgotten Stadium under midnight floodlights.*
 
 ---
@@ -146,7 +146,7 @@ Listening to a memory feels like attending a quiet private ceremony under the li
 
 ### 6. The Vintage Matchday Ticket
 
-![Vintage Matchday Ticket](https://raw.githubusercontent.com/username/ghostlight-stadium-of-echoes/master/public/cover.png)
+![Vintage Matchday Ticket](https://raw.githubusercontent.com/budulay/ghostlight-stadium-of-echoes/main/public/cover.png)
 *Vintage Matchday Ticket: A physical-digital keepsake generated dynamically on HTML5 Canvas.*
 
 One of the most distinctive details is the **Vintage Matchday Ticket generator**.
@@ -164,7 +164,7 @@ Users can toggle between the **Museum Exhibit Plaque** and the **Vintage Matchda
 
 ### 7. The Living Stadium and Echo Threads
 
-![Echo Threads in the Living Stadium](https://raw.githubusercontent.com/username/ghostlight-stadium-of-echoes/master/public/cover.png)
+![Echo Threads in the Living Stadium](https://raw.githubusercontent.com/budulay/ghostlight-stadium-of-echoes/main/public/cover.png)
 *Echo Threads: Luminous Bézier arcs connecting strangers through shared history.*
 
 The stadium is more than a backdrop — it is a living entity.
@@ -302,7 +302,7 @@ ollama pull gemma3:4b
 
 2. Clone and start the application:
 ```bash
-git clone https://github.com/username/ghostlight-stadium-of-echoes.git
+git clone https://github.com/budulay/ghostlight-stadium-of-echoes.git
 cd ghostlight-stadium-of-echoes
 npm install
 npm run dev
