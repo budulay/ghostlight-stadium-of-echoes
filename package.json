@@ -2,6 +2,8 @@
   "name": "ghostlight-stadium-of-echoes",
   "version": "1.0.0",
   "description": "Where memories never die - Interactive digital museum for forgotten football memories powered by Gemma 3",
+  "license": "MIT",
+  "author": "budulay",
   "type": "module",
   "scripts": {
     "dev": "concurrently -k -n \"BACKEND,FRONTEND\" -c \"yellow,cyan\" \"npm run server\" \"npm run client\"",
