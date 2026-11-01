@@ -102,16 +102,19 @@ export const HomeHero: React.FC<HomeHeroProps> = ({
           transition={{ duration: 1, delay: 0.9 }}
           className="w-full max-w-2xl mt-12 mb-4 p-5 rounded-2xl border border-amber-400/25 bg-gradient-to-r from-[#0C1428]/80 via-[#0E1B38]/70 to-[#0C1428]/80 backdrop-blur-xl shadow-[0_10px_35px_rgba(0,0,0,0.8)] text-left flex flex-col sm:flex-row items-center justify-between gap-4"
         >
-          <div className="space-y-1">
+          <div className="space-y-1.5 flex-1 min-w-0">
             <div className="flex items-center gap-2">
               <span className="px-2 py-0.5 rounded text-[10px] uppercase font-mono font-bold tracking-wider bg-amber-500/20 text-amber-300 border border-amber-400/30">
                 Official Sample Exhibit
               </span>
               <span className="text-xs text-slate-400 font-mono">OCTOBER 1998</span>
             </div>
-            <h4 className="font-cinzel text-base sm:text-lg font-bold text-white tracking-wide">
-              {sampleMemory.title} — “{sampleMemory.epitaph}”
+            <h4 className="font-cinzel text-lg sm:text-xl font-bold text-white tracking-wide truncate">
+              {sampleMemory.title}
             </h4>
+            <div className="font-serif italic text-xs sm:text-sm text-amber-200/90 line-clamp-1">
+              “{sampleMemory.epitaph}”
+            </div>
             <p className="text-xs text-slate-300 font-serif italic line-clamp-2 max-w-md">
               “My grandfather took me to a football match in 1998. I barely remember the game, but I remember the lights, the crowd and holding his hand.”
             </p>

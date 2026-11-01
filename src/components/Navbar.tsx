@@ -100,19 +100,19 @@ export const Navbar: React.FC<NavbarProps> = ({
         </nav>
 
         {/* Right side controls */}
-        <div className="flex items-center gap-2 sm:gap-3">
+        <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
           {/* Weather Toggle (Midnight Fog vs Downpour Derby) */}
           <button
             onClick={onToggleWeather}
             title={weather === 'rain' ? 'Switch to Midnight Mist (Current: Torrential Rain)' : 'Switch to Torrential Rain Derby (Current: Midnight Mist)'}
-            className={`p-2 rounded-lg border transition-all text-xs font-mono flex items-center gap-1.5 ${
+            className={`px-2.5 py-1.5 rounded-lg border transition-all text-xs font-mono flex items-center gap-1.5 whitespace-nowrap shrink-0 ${
               weather === 'rain'
-                ? 'bg-blue-950/50 border-blue-400/40 text-blue-300 shadow-[0_0_15px_rgba(59,130,246,0.3)]'
+                ? 'bg-blue-950/60 border-blue-400/50 text-blue-300 shadow-[0_0_15px_rgba(59,130,246,0.35)]'
                 : 'border-slate-800 bg-slate-900/50 text-slate-400 hover:text-slate-200'
             }`}
           >
-            {weather === 'rain' ? <CloudRain className="w-4 h-4 animate-pulse text-blue-400" /> : <CloudFog className="w-4 h-4 text-amber-300/80" />}
-            <span className="hidden lg:inline text-[10px] uppercase">
+            {weather === 'rain' ? <CloudRain className="w-3.5 h-3.5 animate-pulse text-blue-400" /> : <CloudFog className="w-3.5 h-3.5 text-amber-300/80" />}
+            <span className="text-[10px] uppercase font-semibold">
               {weather === 'rain' ? 'Rain Derby' : 'Mist'}
             </span>
           </button>
@@ -120,16 +120,16 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Local AI Model Status Pill */}
           <button
             onClick={onOpenOllamaModal}
-            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-sans border transition-all ${
+            className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-sans border transition-all whitespace-nowrap shrink-0 ${
               isOllamaConnected
-                ? 'bg-emerald-950/40 border-emerald-500/30 text-emerald-300 hover:border-emerald-400'
+                ? 'bg-emerald-950/40 border-emerald-500/40 text-emerald-300 hover:border-emerald-400 shadow-[0_0_12px_rgba(16,185,129,0.15)]'
                 : 'bg-amber-950/40 border-amber-500/30 text-amber-300 hover:border-amber-400'
             }`}
             title="Local AI Model & System Diagnostics"
           >
-            <Cpu className="w-3 h-3" />
-            <span className="hidden sm:inline">
-              {isOllamaConnected ? 'Gemma 3 : 4B' : 'Local AI Ready'}
+            <Cpu className="w-3 h-3 text-emerald-400" />
+            <span className="font-mono text-[10px] tracking-wide">
+              {isOllamaConnected ? 'GEMMA 3 • 4B' : 'LOCAL AI'}
             </span>
             <span
               className={`w-2 h-2 rounded-full ${

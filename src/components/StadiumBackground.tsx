@@ -11,10 +11,10 @@ export const StadiumBackground: React.FC<StadiumBackgroundProps> = ({
   weather = 'fog',
 }) => {
   const [particles, setParticles] = useState<Array<{ id: number; x: number; y: number; size: number; duration: number; delay: number }>>([]);
-  const [raindrops, setRaindrops] = useState<Array<{ id: number; left: number; duration: number; delay: number; height: number; opacity: number }>>([]);
+  const [rainStreaks, setRainStreaks] = useState<Array<{ id: number; left: number; duration: number; delay: number; height: number; opacity: number }>>([]);
 
   useEffect(() => {
-    // Generate atmospheric dust/light particles
+    // Generate atmospheric dust/light particles for Mist mode
     const generated = Array.from({ length: 28 }).map((_, i) => ({
       id: i,
       x: Math.random() * 100,
@@ -25,16 +25,16 @@ export const StadiumBackground: React.FC<StadiumBackgroundProps> = ({
     }));
     setParticles(generated);
 
-    // Generate rain streaks for torrential derby weather mode
-    const drops = Array.from({ length: 60 }).map((_, i) => ({
+    // Generate high-density rain streaks for Rain Derby mode
+    const drops = Array.from({ length: 90 }).map((_, i) => ({
       id: i,
-      left: Math.random() * 100,
-      duration: Math.random() * 0.4 + 0.4,
+      left: Math.random() * 120 - 10, // span slightly wider than screen for slant
+      duration: Math.random() * 0.25 + 0.35, // rapid 0.35-0.6s fall
       delay: Math.random() * 2,
-      height: Math.random() * 45 + 35,
-      opacity: Math.random() * 0.4 + 0.15,
+      height: Math.random() * 80 + 70, // 70px to 150px streaks
+      opacity: Math.random() * 0.35 + 0.15,
     }));
-    setRaindrops(drops);
+    setRainStreaks(drops);
   }, []);
 
   const isSeance = intensity === 'seance';
@@ -49,7 +49,7 @@ export const StadiumBackground: React.FC<StadiumBackgroundProps> = ({
       {/* 2. Top Floodlight Beams Left & Right */}
       <motion.div
         animate={{
-          opacity: isSeance ? [0.3, 0.7, 0.4] : isAwakened ? 0.55 : isRain ? 0.42 : 0.28,
+          opacity: isSeance ? [0.3, 0.7, 0.4] : isAwakened ? 0.55 : isRain ? 0.45 : 0.28,
           scaleY: isSeance ? [0.95, 1.05, 0.98] : 1,
         }}
         transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}
@@ -62,7 +62,7 @@ export const StadiumBackground: React.FC<StadiumBackgroundProps> = ({
 
       <motion.div
         animate={{
-          opacity: isSeance ? [0.3, 0.7, 0.4] : isAwakened ? 0.55 : isRain ? 0.42 : 0.28,
+          opacity: isSeance ? [0.3, 0.7, 0.4] : isAwakened ? 0.55 : isRain ? 0.45 : 0.28,
           scaleY: isSeance ? [0.98, 1.05, 0.95] : 1,
         }}
         transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
@@ -76,13 +76,13 @@ export const StadiumBackground: React.FC<StadiumBackgroundProps> = ({
       {/* 3. Center Pitch Aura */}
       <motion.div
         animate={{
-          opacity: isAwakened ? 0.35 : isSeance ? 0.45 : isRain ? 0.28 : 0.15,
+          opacity: isAwakened ? 0.35 : isSeance ? 0.45 : isRain ? 0.32 : 0.15,
         }}
         transition={{ duration: 2 }}
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[550px] rounded-[100%] pointer-events-none"
         style={{
           background: isRain
-            ? 'radial-gradient(ellipse at center, rgba(16, 45, 90, 0.35) 0%, rgba(212, 175, 55, 0.04) 45%, transparent 75%)'
+            ? 'radial-gradient(ellipse at center, rgba(16, 45, 90, 0.4) 0%, rgba(212, 175, 55, 0.04) 45%, transparent 75%)'
             : 'radial-gradient(ellipse at center, rgba(30, 58, 110, 0.2) 0%, rgba(212, 175, 55, 0.05) 45%, transparent 75%)',
           filter: 'blur(45px)',
         }}
@@ -140,30 +140,31 @@ export const StadiumBackground: React.FC<StadiumBackgroundProps> = ({
         </g>
       </svg>
 
-      {/* 5. Rain Derby Simulation (When rain weather is active) */}
+      {/* 5. Continuous Cinematic Rain Derby (Slanted fast fall) */}
       {isRain && (
         <div className="absolute inset-0 pointer-events-none overflow-hidden z-10">
-          {raindrops.map((d) => (
+          {rainStreaks.map((d) => (
             <motion.div
               key={d.id}
-              initial={{ y: -80, x: `${d.left}vw` }}
-              animate={{ y: '110vh', x: `${d.left - 6}vw` }}
+              initial={{ y: -160, x: `${d.left}vw` }}
+              animate={{ y: '115vh', x: `${d.left - 14}vw` }}
               transition={{
                 duration: d.duration,
                 repeat: Infinity,
                 delay: d.delay,
                 ease: 'linear',
               }}
-              className="absolute w-[1.5px] bg-gradient-to-b from-transparent via-amber-200/50 to-amber-100/70"
+              className="absolute w-[1.2px] bg-gradient-to-b from-transparent via-cyan-100/50 to-blue-200/80"
               style={{
                 height: `${d.height}px`,
                 opacity: d.opacity,
-                transform: 'rotate(15deg)',
+                transform: 'rotate(-16deg)',
+                transformOrigin: 'top left',
               }}
             />
           ))}
           {/* Wet pitch water sheen reflection */}
-          <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-cyan-950/20 via-transparent to-transparent pointer-events-none" />
+          <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-cyan-950/25 via-blue-950/10 to-transparent pointer-events-none" />
         </div>
       )}
 
@@ -183,7 +184,7 @@ export const StadiumBackground: React.FC<StadiumBackgroundProps> = ({
         }}
       />
 
-      {/* 7. Floating Memory Dust / Embers */}
+      {/* 7. Floating Memory Dust / Embers (Active in Mist mode) */}
       {!isRain &&
         particles.map((p) => (
           <motion.div
