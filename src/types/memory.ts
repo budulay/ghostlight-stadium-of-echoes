@@ -36,6 +36,7 @@ export interface StoredMemory extends AnalyzedMemory {
 
 export interface HealthStatus {
   status: 'ok' | 'degraded';
+  demoMode?: boolean;
   ollama: {
     connected: boolean;
     endpoint: string;

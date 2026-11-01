@@ -89,6 +89,19 @@ export const OllamaDiagnosticModal: React.FC<OllamaDiagnosticModalProps> = ({
             </button>
           </div>
 
+          {/* Cloud Demo Notice Banner */}
+          {health?.demoMode && (
+            <div className="p-3.5 rounded-xl bg-sky-950/50 border border-sky-500/40 text-xs text-sky-200 flex items-start gap-3">
+              <span className="text-lg">🌐</span>
+              <div className="space-y-1">
+                <strong className="text-white block font-sans">Live Cloud Showcase (Render)</strong>
+                <p className="text-slate-300 leading-relaxed font-sans">
+                  You are exploring the hosted cloud demo. All visual themes, weather effects, Tannoy announcer, and museum archives are active. Memories created here are processed via our deterministic Sanctuary Engine. To run live open-weight inference with <strong>Google Gemma 3 4B</strong> on your device, clone the repo from GitHub and run with Ollama!
+                </p>
+              </div>
+            </div>
+          )}
+
           {/* Connection Status Panel */}
           <div className="p-4 rounded-xl bg-slate-950/80 border border-slate-800 space-y-3">
             <div className="flex items-center justify-between">

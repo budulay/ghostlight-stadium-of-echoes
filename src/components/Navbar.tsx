@@ -183,17 +183,19 @@ export const Navbar: React.FC<NavbarProps> = ({
             className={`h-[34px] px-3 rounded-full text-[11px] font-sans border transition-all whitespace-nowrap shrink-0 flex items-center gap-1.5 cursor-pointer ${
               isOllamaConnected
                 ? 'bg-emerald-950/40 border-emerald-500/40 text-emerald-300 hover:border-emerald-400 shadow-[0_0_12px_rgba(16,185,129,0.15)]'
+                : health?.demoMode
+                ? 'bg-sky-950/40 border-sky-500/40 text-sky-300 hover:border-sky-400 shadow-[0_0_12px_rgba(56,189,248,0.15)]'
                 : 'bg-amber-950/40 border-amber-500/30 text-amber-300 hover:border-amber-400'
             }`}
             title="Local AI Model & System Diagnostics"
           >
-            <Cpu className="w-3 h-3 text-emerald-400 shrink-0" />
+            <Cpu className={`w-3 h-3 ${isOllamaConnected ? 'text-emerald-400' : health?.demoMode ? 'text-sky-400' : 'text-amber-400'} shrink-0`} />
             <span className="font-mono text-[10px] tracking-wide">
-              {isOllamaConnected ? 'GEMMA 3 • 4B' : 'LOCAL AI'}
+              {isOllamaConnected ? 'GEMMA 3 • 4B' : (health?.demoMode ? 'CLOUD DEMO' : 'LOCAL AI')}
             </span>
             <span
               className={`w-2 h-2 rounded-full shrink-0 ${
-                isOllamaConnected ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'
+                isOllamaConnected ? 'bg-emerald-400 animate-pulse' : health?.demoMode ? 'bg-sky-400 animate-pulse' : 'bg-amber-400'
               }`}
             />
           </button>

@@ -21,10 +21,12 @@ app.use(express.json({ limit: '20mb' }));
 app.get('/api/health', async (_req: Request, res: Response) => {
   const ollamaHealth = await checkOllamaHealth();
   const elevenlabsConfigured = Boolean(process.env.ELEVENLABS_API_KEY);
+  const isDemoMode = process.env.DEMO_MODE === 'true';
 
   res.json({
-    status: ollamaHealth.connected ? 'ok' : 'degraded',
+    status: (ollamaHealth.connected || isDemoMode) ? 'ok' : 'degraded',
     timestamp: new Date().toISOString(),
+    demoMode: isDemoMode,
     ollama: ollamaHealth,
     elevenlabs: {
       configured: elevenlabsConfigured,
@@ -101,15 +103,18 @@ app.post('/api/analyze-memory', async (req: Request, res: Response): Promise<voi
       }
     }
 
-    // If Ollama is not connected or model is missing
-    if (allowFallback) {
-      console.log('[Ghostlight] Ollama offline or model unavailable. Using local fallback engine.');
+    // If in DEMO_MODE or allowFallback
+    const isDemoMode = process.env.DEMO_MODE === 'true';
+    if (isDemoMode || allowFallback) {
+      console.log(`[Ghostlight] Using local deterministic sanctuary engine (${isDemoMode ? 'Cloud Demo Mode' : 'Offline Fallback'})...`);
       const fallbackResult = synthesizeFallbackNarrative(payload);
       res.json({
         success: true,
-        processedBy: 'offline_fallback',
-        model: 'deterministic_engine',
-        notice: health.error || 'Ollama is offline. Memory analyzed with local respectful engine.',
+        processedBy: isDemoMode ? 'cloud_demo_engine' : 'offline_fallback',
+        model: 'sanctuary_deterministic_engine',
+        notice: isDemoMode
+          ? 'Live Cloud Demo: Awoken via Sanctuary Engine. For full open-weight Gemma 3 4B inference on your device, clone and run locally with Ollama.'
+          : (health.error || 'Ollama is offline. Memory analyzed with local respectful engine.'),
         data: fallbackResult,
       });
       return;
@@ -198,10 +203,11 @@ app.use((req: Request, res: Response, next: any) => {
   });
 });
 
-app.listen(PORT, () => {
+app.listen(Number(PORT), '0.0.0.0', () => {
   console.log(`\n======================================================`);
   console.log(`  GHOSTLIGHT: STADIUM OF ECHOES`);
-  console.log(`  Backend running on http://localhost:${PORT}`);
+  console.log(`  Backend running on http://0.0.0.0:${PORT}`);
+  console.log(`  Demo Mode: ${process.env.DEMO_MODE === 'true' ? 'ACTIVE' : 'OFF'}`);
   console.log(`  Configured Gemma Model: ${process.env.GEMMA_MODEL || 'gemma3:4b'}`);
   console.log(`  Ollama Target: ${process.env.OLLAMA_HOST || 'http://localhost:11434'}`);
   console.log(`======================================================\n`);
