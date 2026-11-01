@@ -31,6 +31,7 @@ interface MemoryRevealProps {
   onAwakenAnother?: () => void;
   processedBy?: string;
   modelName?: string;
+  theme?: 'midnight' | 'darkroom';
 }
 
 export const MemoryReveal: React.FC<MemoryRevealProps> = ({
@@ -41,7 +42,9 @@ export const MemoryReveal: React.FC<MemoryRevealProps> = ({
   onAwakenAnother,
   processedBy,
   modelName,
+  theme = 'midnight',
 }) => {
+  const isDarkroom = theme === 'darkroom';
   const [narratorState, setNarratorState] = useState<'idle' | 'speaking' | 'paused'>('idle');
   const [voiceMode, setVoiceMode] = useState<'tannoy' | 'whisper'>('tannoy');
   const [isExportingCard, setIsExportingCard] = useState(false);
@@ -96,7 +99,7 @@ export const MemoryReveal: React.FC<MemoryRevealProps> = ({
   const handleDownloadCard = async () => {
     setIsExportingCard(true);
     try {
-      await downloadMemoryCardImage(memory);
+      await downloadMemoryCardImage(memory, theme);
     } finally {
       setIsExportingCard(false);
     }
@@ -105,7 +108,7 @@ export const MemoryReveal: React.FC<MemoryRevealProps> = ({
   const handleDownloadTicket = async () => {
     setIsExportingTicket(true);
     try {
-      await downloadMatchdayTicketImage(memory);
+      await downloadMatchdayTicketImage(memory, theme);
     } finally {
       setIsExportingTicket(false);
     }
@@ -178,7 +181,11 @@ export const MemoryReveal: React.FC<MemoryRevealProps> = ({
           initial={{ opacity: 0, scale: 0.98 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.6 }}
-          className="relative rounded-3xl border border-amber-400/35 bg-[#090E1D]/90 backdrop-blur-2xl shadow-[0_25px_80px_rgba(0,0,0,0.95)] overflow-hidden p-6 sm:p-10 md:p-12 space-y-8"
+          className={`relative rounded-3xl border backdrop-blur-2xl shadow-[0_25px_80px_rgba(0,0,0,0.95)] overflow-hidden p-6 sm:p-10 md:p-12 space-y-8 transition-colors ${
+            isDarkroom
+              ? 'border-amber-600/35 bg-[#1C1510]/95'
+              : 'border-amber-400/35 bg-[#090E1D]/90'
+          }`}
         >
           {/* Top Gold Corner Filigree */}
           <div className="absolute top-0 left-0 w-24 h-24 border-t-2 border-l-2 border-amber-400/40 rounded-tl-3xl pointer-events-none" />
@@ -410,7 +417,11 @@ export const MemoryReveal: React.FC<MemoryRevealProps> = ({
           initial={{ opacity: 0, scale: 0.98 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5 }}
-          className="rounded-3xl border border-amber-400/40 bg-gradient-to-b from-[#0E162B] to-[#070D1A] p-6 sm:p-10 shadow-2xl space-y-6 text-slate-200"
+          className={`rounded-3xl border p-6 sm:p-10 shadow-2xl space-y-6 text-slate-200 transition-colors ${
+            isDarkroom
+              ? 'border-amber-600/40 bg-gradient-to-b from-[#221812] to-[#120E0A]'
+              : 'border-amber-400/40 bg-gradient-to-b from-[#0E162B] to-[#070D1A]'
+          }`}
         >
           <div className="flex items-center justify-between border-b border-amber-500/15 pb-4">
             <div>

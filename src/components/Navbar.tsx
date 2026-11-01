@@ -1,5 +1,5 @@
 import React from 'react';
-import { Volume2, VolumeX, Sparkles, BookOpen, MapPin, Plus, Cpu, Info, CloudRain, CloudFog } from 'lucide-react';
+import { Volume2, VolumeX, Sparkles, BookOpen, MapPin, Plus, Cpu, Info, CloudRain, CloudFog, Moon, Flame } from 'lucide-react';
 import { HealthStatus } from '../types/memory';
 import { ghostNarrator } from '../services/speech';
 
@@ -10,6 +10,8 @@ interface NavbarProps {
   health: HealthStatus | null;
   weather: 'fog' | 'rain';
   onToggleWeather: () => void;
+  theme: 'midnight' | 'darkroom';
+  onToggleTheme: () => void;
   onOpenOllamaModal: () => void;
   onOpenAboutModal: () => void;
 }
@@ -21,6 +23,8 @@ export const Navbar: React.FC<NavbarProps> = ({
   health,
   weather,
   onToggleWeather,
+  theme,
+  onToggleTheme,
   onOpenOllamaModal,
   onOpenAboutModal,
 }) => {
@@ -32,24 +36,37 @@ export const Navbar: React.FC<NavbarProps> = ({
   };
 
   const isOllamaConnected = Boolean(health?.ollama?.connected && health?.ollama?.modelAvailable);
+  const isDarkroom = theme === 'darkroom';
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-amber-500/15 bg-[#04060B]/85 backdrop-blur-md transition-all">
+    <header className={`sticky top-0 z-40 w-full border-b backdrop-blur-md transition-colors duration-500 ${
+      isDarkroom ? 'border-amber-600/25 bg-[#0C0A09]/90' : 'border-amber-500/15 bg-[#04060B]/85'
+    }`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
         {/* Brand */}
         <button
           onClick={() => onNavigate('home')}
           className="flex items-center gap-3 text-left group focus:outline-none shrink-0"
         >
-          <div className="relative w-10 h-10 rounded-full border border-amber-400/40 bg-gradient-to-b from-amber-400/20 to-transparent flex items-center justify-center shadow-[0_0_15px_rgba(212,175,55,0.25)] group-hover:border-amber-400 transition-colors shrink-0">
+          <div className={`relative w-10 h-10 rounded-full border flex items-center justify-center transition-all shrink-0 ${
+            isDarkroom
+              ? 'border-amber-500/50 bg-gradient-to-b from-amber-500/25 to-transparent shadow-[0_0_18px_rgba(245,158,11,0.35)]'
+              : 'border-amber-400/40 bg-gradient-to-b from-amber-400/20 to-transparent shadow-[0_0_15px_rgba(212,175,55,0.25)]'
+          }`}>
             <span className="font-serif text-xl font-bold text-amber-200">G</span>
-            <div className="absolute inset-0 rounded-full animate-ping opacity-20 bg-amber-400" />
+            <div className={`absolute inset-0 rounded-full animate-ping opacity-20 ${
+              isDarkroom ? 'bg-amber-500' : 'bg-amber-400'
+            }`} />
           </div>
           <div>
             <div className="font-cinzel text-lg sm:text-xl font-bold tracking-[0.2em] text-white flex items-center gap-2 whitespace-nowrap">
               GHOSTLIGHT
-              <span className="text-[10px] tracking-normal px-2 py-0.5 rounded-full border border-amber-400/30 bg-amber-500/10 text-amber-300 font-sans font-medium uppercase hidden sm:inline-block">
-                Museum
+              <span className={`text-[10px] tracking-normal px-2 py-0.5 rounded-full border font-sans font-medium uppercase hidden sm:inline-block ${
+                isDarkroom
+                  ? 'border-amber-500/40 bg-amber-600/15 text-amber-200'
+                  : 'border-amber-400/30 bg-amber-500/10 text-amber-300'
+              }`}>
+                {isDarkroom ? 'Pressroom' : 'Museum'}
               </span>
             </div>
             <div className="text-[11px] font-sans tracking-widest text-slate-400 uppercase font-light whitespace-nowrap">
@@ -100,7 +117,27 @@ export const Navbar: React.FC<NavbarProps> = ({
         </nav>
 
         {/* Right side controls */}
-        <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
+        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+          {/* Theme Switcher Toggle (Midnight Sanctuary vs Archival Darkroom) */}
+          <button
+            onClick={onToggleTheme}
+            title={isDarkroom ? 'Switch to Midnight Sanctuary theme' : 'Switch to Archival Darkroom & Amber theme'}
+            className={`w-[96px] h-[34px] rounded-lg border transition-all text-xs font-mono flex items-center justify-center gap-1.5 whitespace-nowrap shrink-0 cursor-pointer ${
+              isDarkroom
+                ? 'bg-amber-950/60 border-amber-500/50 text-amber-200 shadow-[0_0_15px_rgba(245,158,11,0.3)]'
+                : 'border-slate-800 bg-slate-900/50 text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            {isDarkroom ? (
+              <Flame className="w-3.5 h-3.5 text-amber-400 animate-pulse shrink-0" />
+            ) : (
+              <Moon className="w-3.5 h-3.5 text-slate-300 shrink-0" />
+            )}
+            <span className="text-[10px] uppercase font-semibold tracking-wide">
+              {isDarkroom ? 'Darkroom' : 'Midnight'}
+            </span>
+          </button>
+
           {/* Weather Toggle with Fixed Width to Guarantee Zero Layout Shift */}
           <button
             onClick={onToggleWeather}
@@ -177,7 +214,9 @@ export const Navbar: React.FC<NavbarProps> = ({
       </div>
 
       {/* Mobile Nav Bar */}
-      <div className="flex md:hidden border-t border-amber-500/10 px-4 py-2 bg-[#060914] justify-around text-xs">
+      <div className={`flex md:hidden border-t px-4 py-2 justify-around text-xs transition-colors ${
+        isDarkroom ? 'border-amber-600/20 bg-[#120E0A]' : 'border-amber-500/10 bg-[#060914]'
+      }`}>
         <button
           onClick={() => onNavigate('home')}
           className={`py-1 px-2 rounded ${currentView === 'home' ? 'text-amber-300 font-semibold' : 'text-slate-400'}`}

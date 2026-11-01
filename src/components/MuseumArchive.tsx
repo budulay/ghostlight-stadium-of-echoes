@@ -27,6 +27,7 @@ interface MuseumArchiveProps {
   onDeleteMemory: (id: string) => void;
   onAwakenClick: () => void;
   onCapsuleImported: (updatedList: StoredMemory[]) => void;
+  theme?: 'midnight' | 'darkroom';
 }
 
 export const MuseumArchive: React.FC<MuseumArchiveProps> = ({
@@ -35,7 +36,9 @@ export const MuseumArchive: React.FC<MuseumArchiveProps> = ({
   onDeleteMemory,
   onAwakenClick,
   onCapsuleImported,
+  theme = 'midnight',
 }) => {
+  const isDarkroom = theme === 'darkroom';
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedDecade, setSelectedDecade] = useState<string>('all');
   const [memoryToDelete, setMemoryToDelete] = useState<StoredMemory | null>(null);
@@ -203,7 +206,11 @@ export const MuseumArchive: React.FC<MuseumArchiveProps> = ({
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95 }}
               transition={{ duration: 0.3 }}
-              className="group rounded-2xl border border-amber-500/20 bg-gradient-to-b from-[#090F21] to-[#050811] hover:border-amber-400/50 shadow-[0_10px_30px_rgba(0,0,0,0.8)] overflow-hidden flex flex-col justify-between transition-all duration-300 hover:shadow-[0_15px_40px_rgba(212,175,55,0.15)]"
+              className={`group rounded-2xl border transition-all duration-300 overflow-hidden flex flex-col justify-between shadow-[0_10px_30px_rgba(0,0,0,0.8)] ${
+                isDarkroom
+                  ? 'border-amber-600/25 bg-gradient-to-b from-[#1E1712] to-[#120E0A] hover:border-amber-500/50 hover:shadow-[0_15px_40px_rgba(245,158,11,0.18)]'
+                  : 'border-amber-500/20 bg-gradient-to-b from-[#090F21] to-[#050811] hover:border-amber-400/50 hover:shadow-[0_15px_40px_rgba(212,175,55,0.15)]'
+              }`}
             >
               <div>
                 {/* Thumbnail Header */}
@@ -218,7 +225,11 @@ export const MuseumArchive: React.FC<MuseumArchiveProps> = ({
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-85 group-hover:opacity-100"
                     />
                   ) : (
-                    <div className="w-full h-full flex flex-col items-center justify-center p-4 bg-gradient-to-b from-[#0C152B] to-[#060A14] text-amber-400/40 border-b border-amber-500/10">
+                    <div className={`w-full h-full flex flex-col items-center justify-center p-4 border-b ${
+                      isDarkroom
+                        ? 'bg-gradient-to-b from-[#211913] to-[#130E0A] text-amber-500/40 border-amber-600/15'
+                        : 'bg-gradient-to-b from-[#0C152B] to-[#060A14] text-amber-400/40 border-amber-500/10'
+                    }`}>
                       <Sparkles className="w-8 h-8 mb-2" />
                       <span className="text-[10px] font-mono tracking-widest text-slate-500 uppercase">
                         Atmospheric Memory
@@ -264,7 +275,9 @@ export const MuseumArchive: React.FC<MuseumArchiveProps> = ({
               </div>
 
               {/* Action Buttons Bar */}
-              <div className="px-5 py-3.5 border-t border-slate-800/80 bg-slate-950/60 flex items-center justify-between gap-2 text-xs">
+              <div className={`px-5 py-3.5 border-t flex items-center justify-between gap-2 text-xs ${
+                isDarkroom ? 'border-amber-900/30 bg-[#0E0A08]/80' : 'border-slate-800/80 bg-slate-950/60'
+              }`}>
                 <button
                   onClick={() => onOpenMemory(m)}
                   className="font-cinzel font-semibold text-amber-300 hover:text-white flex items-center gap-1.5 transition-colors cursor-pointer"
@@ -275,7 +288,7 @@ export const MuseumArchive: React.FC<MuseumArchiveProps> = ({
 
                 <div className="flex items-center gap-1">
                   <button
-                    onClick={() => downloadMatchdayTicketImage(m)}
+                    onClick={() => downloadMatchdayTicketImage(m, theme)}
                     title="Download Matchday Ticket (PNG)"
                     className="p-1.5 rounded-lg text-slate-400 hover:text-amber-300 hover:bg-slate-800 transition-colors"
                   >
@@ -283,7 +296,7 @@ export const MuseumArchive: React.FC<MuseumArchiveProps> = ({
                   </button>
 
                   <button
-                    onClick={() => downloadMemoryCardImage(m)}
+                    onClick={() => downloadMemoryCardImage(m, theme)}
                     title="Download Archival Card (PNG)"
                     className="p-1.5 rounded-lg text-slate-400 hover:text-amber-300 hover:bg-slate-800 transition-colors"
                   >

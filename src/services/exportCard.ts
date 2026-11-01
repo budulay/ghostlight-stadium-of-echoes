@@ -39,8 +39,12 @@ export function exportMemoryAsJSON(memory: StoredMemory) {
 
 /**
  * Generates and downloads a museum-grade 1200x1500px archival card as PNG
+ * Supports 'midnight' (Midnight Sanctuary) and 'darkroom' (Archival Darkroom & Newsprint) themes
  */
-export async function downloadMemoryCardImage(memory: StoredMemory): Promise<void> {
+export async function downloadMemoryCardImage(
+  memory: StoredMemory,
+  theme: 'midnight' | 'darkroom' = 'midnight'
+): Promise<void> {
   const canvas = document.createElement('canvas');
   const width = 1200;
   const height = 1500;
@@ -49,18 +53,37 @@ export async function downloadMemoryCardImage(memory: StoredMemory): Promise<voi
   const ctx = canvas.getContext('2d');
   if (!ctx) return;
 
-  // 1. Background midnight gradient
+  const isDarkroom = theme === 'darkroom';
+
+  // 1. Background gradient (Midnight Navy vs Darkroom Carbon Noir)
   const bgGrad = ctx.createRadialGradient(width / 2, 200, 50, width / 2, height / 2, 900);
-  bgGrad.addColorStop(0, '#0E172E');
-  bgGrad.addColorStop(0.5, '#070C18');
-  bgGrad.addColorStop(1, '#030509');
+  if (isDarkroom) {
+    bgGrad.addColorStop(0, '#261910');
+    bgGrad.addColorStop(0.5, '#160F0A');
+    bgGrad.addColorStop(1, '#0C0805');
+  } else {
+    bgGrad.addColorStop(0, '#0E172E');
+    bgGrad.addColorStop(0.5, '#070C18');
+    bgGrad.addColorStop(1, '#030509');
+  }
   ctx.fillStyle = bgGrad;
   ctx.fillRect(0, 0, width, height);
+
+  // Subtle film grain for Darkroom mode
+  if (isDarkroom) {
+    ctx.fillStyle = 'rgba(245, 158, 11, 0.035)';
+    for (let i = 0; i < 4000; i++) {
+      ctx.fillRect(Math.random() * width, Math.random() * height, 1.5, 1.5);
+    }
+  }
 
   // 2. Subtle stadium floodlight rays from top corners
   ctx.save();
   const leftBeam = ctx.createRadialGradient(100, 0, 10, 300, 600, 700);
-  leftBeam.addColorStop(0, 'rgba(245, 215, 127, 0.18)');
+  leftBeam.addColorStop(
+    0,
+    isDarkroom ? 'rgba(251, 191, 36, 0.22)' : 'rgba(245, 215, 127, 0.18)'
+  );
   leftBeam.addColorStop(1, 'rgba(212, 175, 55, 0)');
   ctx.fillStyle = leftBeam;
   ctx.beginPath();
@@ -71,7 +94,10 @@ export async function downloadMemoryCardImage(memory: StoredMemory): Promise<voi
   ctx.fill();
 
   const rightBeam = ctx.createRadialGradient(width - 100, 0, 10, width - 300, 600, 700);
-  rightBeam.addColorStop(0, 'rgba(245, 215, 127, 0.18)');
+  rightBeam.addColorStop(
+    0,
+    isDarkroom ? 'rgba(251, 191, 36, 0.22)' : 'rgba(245, 215, 127, 0.18)'
+  );
   rightBeam.addColorStop(1, 'rgba(212, 175, 55, 0)');
   ctx.fillStyle = rightBeam;
   ctx.beginPath();
@@ -82,18 +108,18 @@ export async function downloadMemoryCardImage(memory: StoredMemory): Promise<voi
   ctx.fill();
   ctx.restore();
 
-  // 3. Ornate Double Gold Border
-  ctx.strokeStyle = 'rgba(212, 175, 55, 0.45)';
+  // 3. Ornate Double Gold / Antique Brass Border
+  ctx.strokeStyle = isDarkroom ? 'rgba(224, 169, 109, 0.55)' : 'rgba(212, 175, 55, 0.45)';
   ctx.lineWidth = 3;
   ctx.strokeRect(50, 50, width - 100, height - 100);
 
-  ctx.strokeStyle = 'rgba(212, 175, 55, 0.2)';
+  ctx.strokeStyle = isDarkroom ? 'rgba(224, 169, 109, 0.25)' : 'rgba(212, 175, 55, 0.2)';
   ctx.lineWidth = 1;
   ctx.strokeRect(62, 62, width - 124, height - 124);
 
   // Corner ornaments
   const drawCorner = (x: number, y: number) => {
-    ctx.fillStyle = '#D4AF37';
+    ctx.fillStyle = isDarkroom ? '#F59E0B' : '#D4AF37';
     ctx.fillRect(x - 4, y - 4, 8, 8);
   };
   drawCorner(50, 50);
@@ -103,13 +129,15 @@ export async function downloadMemoryCardImage(memory: StoredMemory): Promise<voi
 
   // 4. Header: Museum title & tagline
   ctx.textAlign = 'center';
-  ctx.fillStyle = '#D4AF37';
-  ctx.font = '600 22px Cinzel, serif';
+  ctx.fillStyle = isDarkroom ? '#F59E0B' : '#D4AF37';
+  ctx.font = isDarkroom ? 'bold 22px "Playfair Display", Georgia, serif' : '600 22px Cinzel, serif';
   ctx.letterSpacing = '6px';
   ctx.fillText('GHOSTLIGHT : STADIUM OF ECHOES', width / 2, 120);
 
-  ctx.fillStyle = '#94A3B8';
-  ctx.font = 'italic 16px "Cormorant Garamond", Georgia, serif';
+  ctx.fillStyle = isDarkroom ? '#A8A29E' : '#94A3B8';
+  ctx.font = isDarkroom
+    ? 'italic 16px "Newsreader", "Cormorant Garamond", Georgia, serif'
+    : 'italic 16px "Cormorant Garamond", Georgia, serif';
   ctx.fillText('“Where memories never die”', width / 2, 148);
 
   ctx.strokeStyle = 'rgba(212, 175, 55, 0.3)';

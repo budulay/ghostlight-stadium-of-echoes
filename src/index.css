@@ -31,7 +31,32 @@
     color: #E2E8F0;
     font-family: var(--font-sans);
     min-height: 100vh;
+    transition: background-color 0.5s ease, color 0.5s ease;
   }
+
+  /* Theme: Archival Pressroom / Darkroom Amber */
+  body.theme-darkroom {
+    --font-cinzel: "Playfair Display", "Cinzel", serif;
+    --font-serif: "Newsreader", "Cormorant Garamond", Georgia, serif;
+    --font-mono: "Courier Prime", monospace;
+
+    background-color: #0C0A09;
+    background-image: 
+      radial-gradient(ellipse 80% 50% at 50% -20%, rgba(95, 48, 20, 0.38), transparent 70%),
+      radial-gradient(ellipse 60% 40% at 50% 120%, rgba(245, 158, 11, 0.08), transparent 60%);
+    color: #F5EBE1;
+  }
+}
+
+/* Analog Film Emulsion Texture for Archival Darkroom */
+body.theme-darkroom::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+  opacity: 0.032;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
 }
 
 /* Custom glow and atmosphere utilities */
@@ -39,8 +64,20 @@
   box-shadow: 0 0 25px -5px rgba(212, 175, 55, 0.35), 0 0 10px -2px rgba(212, 175, 55, 0.2);
 }
 
+.theme-darkroom .gold-glow {
+  box-shadow: 0 0 25px -5px rgba(245, 158, 11, 0.45), 0 0 10px -2px rgba(217, 119, 6, 0.25);
+}
+
 .gold-glow-intense {
   box-shadow: 0 0 45px -5px rgba(212, 175, 55, 0.6), 0 0 20px 0px rgba(245, 215, 127, 0.4);
+}
+
+.theme-darkroom .gold-glow-intense {
+  box-shadow: 0 0 45px -5px rgba(245, 158, 11, 0.65), 0 0 20px 0px rgba(251, 191, 36, 0.45);
+}
+
+.amber-glow {
+  box-shadow: 0 0 30px -5px rgba(245, 158, 11, 0.45), 0 0 12px 0px rgba(251, 191, 36, 0.35);
 }
 
 .floodlight-beam {
@@ -54,6 +91,11 @@
   border: 1px solid rgba(212, 175, 55, 0.18);
 }
 
+.theme-darkroom .cinematic-glass {
+  background: rgba(22, 18, 15, 0.82);
+  border: 1px solid rgba(224, 169, 109, 0.22);
+}
+
 .cinematic-glass-gold {
   background: linear-gradient(135deg, rgba(212, 175, 55, 0.07) 0%, rgba(8, 14, 28, 0.85) 100%);
   backdrop-filter: blur(16px);
@@ -61,8 +103,19 @@
   border: 1px solid rgba(212, 175, 55, 0.25);
 }
 
+.theme-darkroom .cinematic-glass-gold {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.09) 0%, rgba(24, 18, 14, 0.9) 100%);
+  border: 1px solid rgba(224, 169, 109, 0.3);
+}
+
 .text-gold-gradient {
   background: linear-gradient(135deg, #FFF6D6 0%, #E5C158 50%, #C5A059 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.theme-darkroom .text-gold-gradient {
+  background: linear-gradient(135deg, #FFFBEB 0%, #FBBF24 50%, #D97706 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -114,9 +167,15 @@
 ::-webkit-scrollbar-track {
   background: #04060B;
 }
+.theme-darkroom ::-webkit-scrollbar-track {
+  background: #0C0A09;
+}
 ::-webkit-scrollbar-thumb {
   background: rgba(212, 175, 55, 0.25);
   border-radius: 3px;
+}
+.theme-darkroom ::-webkit-scrollbar-thumb {
+  background: rgba(224, 169, 109, 0.3);
 }
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(212, 175, 55, 0.45);

@@ -38,6 +38,12 @@ export function App() {
   const [isNewAwakening, setIsNewAwakening] = useState(false);
   const [lastProcessedBy, setLastProcessedBy] = useState<string>('ollama_gemma3');
   const [weather, setWeather] = useState<'fog' | 'rain'>('fog');
+  const [theme, setTheme] = useState<'midnight' | 'darkroom'>(() => {
+    if (typeof window !== 'undefined') {
+      return (localStorage.getItem('ghostlight_theme') as 'midnight' | 'darkroom') || 'midnight';
+    }
+    return 'midnight';
+  });
 
   // Modals & Overlays
   const [isCreateOpen, setIsCreateOpen] = useState(false);
@@ -51,6 +57,16 @@ export function App() {
 
   // System Health
   const [health, setHealth] = useState<HealthStatus | null>(null);
+
+  // Sync theme class to document body
+  useEffect(() => {
+    if (theme === 'darkroom') {
+      document.body.classList.add('theme-darkroom');
+    } else {
+      document.body.classList.remove('theme-darkroom');
+    }
+    localStorage.setItem('ghostlight_theme', theme);
+  }, [theme]);
 
   // Initialize DB and Health
   useEffect(() => {
@@ -79,6 +95,11 @@ export function App() {
     const newWeather = weather === 'fog' ? 'rain' : 'fog';
     setWeather(newWeather);
     ghostNarrator.setWeather(newWeather);
+  };
+
+  const handleToggleTheme = () => {
+    const newTheme = theme === 'midnight' ? 'darkroom' : 'midnight';
+    setTheme(newTheme);
   };
 
   // Launch AI Seance Workflow
@@ -154,13 +175,14 @@ export function App() {
   };
 
   return (
-    <div className="relative min-h-screen bg-[#04060B] text-slate-100 flex flex-col font-sans selection:bg-amber-400/30 selection:text-amber-100">
-      {/* Dynamic Cinematic Background with Lights, Mist & Weather */}
+    <div className="relative min-h-screen text-slate-100 flex flex-col font-sans selection:bg-amber-400/30 selection:text-amber-100">
+      {/* Dynamic Cinematic Background with Lights, Mist, Weather & Theme */}
       <StadiumBackground
         intensity={
           isSeanceActive ? 'seance' : currentView === 'reveal' ? 'awakened' : 'subtle'
         }
         weather={weather}
+        theme={theme}
       />
 
       {/* Top Navbar */}
@@ -177,6 +199,8 @@ export function App() {
         health={health}
         weather={weather}
         onToggleWeather={handleToggleWeather}
+        theme={theme}
+        onToggleTheme={handleToggleTheme}
         onOpenOllamaModal={() => setIsOllamaModalOpen(true)}
         onOpenAboutModal={() => setIsAboutModalOpen(true)}
       />
@@ -215,6 +239,7 @@ export function App() {
                 onSelectMemory={handleOpenMemoryFromList}
                 onAwakenClick={() => setIsCreateOpen(true)}
                 highlightedMemoryId={activeRevealMemory?.id}
+                theme={theme}
               />
             </motion.div>
           )}
@@ -233,6 +258,7 @@ export function App() {
                 onDeleteMemory={handleDeleteMemory}
                 onAwakenClick={() => setIsCreateOpen(true)}
                 onCapsuleImported={(updatedList) => setMemories(updatedList)}
+                theme={theme}
               />
             </motion.div>
           )}
@@ -252,6 +278,7 @@ export function App() {
                 onAwakenAnother={() => setIsCreateOpen(true)}
                 processedBy={lastProcessedBy}
                 modelName={health?.ollama?.configuredModel || 'gemma3:4b'}
+                theme={theme}
               />
             </motion.div>
           )}
@@ -259,7 +286,7 @@ export function App() {
       </main>
 
       {/* Footer */}
-      <footer className="relative z-10 border-t border-amber-500/10 py-6 text-center text-xs font-serif italic text-slate-500 bg-[#04060B]/80 backdrop-blur-md">
+      <footer className="relative z-10 border-t border-amber-500/10 py-6 text-center text-xs font-serif italic text-slate-500 bg-black/40 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
           <div>
             GHOSTLIGHT: STADIUM OF ECHOES • “Where memories never die.”

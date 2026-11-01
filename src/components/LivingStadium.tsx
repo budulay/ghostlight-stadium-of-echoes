@@ -8,6 +8,7 @@ interface LivingStadiumProps {
   onSelectMemory: (memory: StoredMemory) => void;
   onAwakenClick: () => void;
   highlightedMemoryId?: string;
+  theme?: 'midnight' | 'darkroom';
 }
 
 export const LivingStadium: React.FC<LivingStadiumProps> = ({
@@ -15,10 +16,13 @@ export const LivingStadium: React.FC<LivingStadiumProps> = ({
   onSelectMemory,
   onAwakenClick,
   highlightedMemoryId,
+  theme = 'midnight',
 }) => {
   const [hoveredMemory, setHoveredMemory] = useState<StoredMemory | null>(null);
   const [selectedStand, setSelectedStand] = useState<string>('all');
   const [showConstellations, setShowConstellations] = useState(true);
+
+  const isDarkroom = theme === 'darkroom';
 
   const filteredMemories = selectedStand === 'all'
     ? memories
@@ -156,16 +160,20 @@ export const LivingStadium: React.FC<LivingStadiumProps> = ({
       </div>
 
       {/* Interactive Stadium Pitch & Grandstands Floorplan */}
-      <div className="relative w-full aspect-[4/3] sm:aspect-[16/10] max-h-[700px] rounded-3xl border border-amber-500/25 bg-gradient-to-b from-[#070D1B] via-[#040711] to-[#070D1B] p-4 sm:p-8 overflow-hidden shadow-[0_20px_70px_rgba(0,0,0,0.95)]">
+      <div className={`relative w-full aspect-[4/3] sm:aspect-[16/10] max-h-[700px] rounded-3xl border transition-colors duration-500 p-4 sm:p-8 overflow-hidden shadow-[0_20px_70px_rgba(0,0,0,0.95)] ${
+        isDarkroom
+          ? 'border-amber-600/30 bg-gradient-to-b from-[#1C1510] via-[#100D09] to-[#1C1510]'
+          : 'border-amber-500/25 bg-gradient-to-b from-[#070D1B] via-[#040711] to-[#070D1B]'
+      }`}>
         {/* Subtle Floodlight Halos at 4 Corners */}
-        <div className="absolute top-4 left-4 w-32 h-32 rounded-full bg-amber-400/10 blur-2xl pointer-events-none" />
-        <div className="absolute top-4 right-4 w-32 h-32 rounded-full bg-amber-400/10 blur-2xl pointer-events-none" />
-        <div className="absolute bottom-4 left-4 w-32 h-32 rounded-full bg-amber-400/10 blur-2xl pointer-events-none" />
-        <div className="absolute bottom-4 right-4 w-32 h-32 rounded-full bg-amber-400/10 blur-2xl pointer-events-none" />
+        <div className={`absolute top-4 left-4 w-32 h-32 rounded-full blur-2xl pointer-events-none ${isDarkroom ? 'bg-amber-500/15' : 'bg-amber-400/10'}`} />
+        <div className={`absolute top-4 right-4 w-32 h-32 rounded-full blur-2xl pointer-events-none ${isDarkroom ? 'bg-amber-500/15' : 'bg-amber-400/10'}`} />
+        <div className={`absolute bottom-4 left-4 w-32 h-32 rounded-full blur-2xl pointer-events-none ${isDarkroom ? 'bg-amber-500/15' : 'bg-amber-400/10'}`} />
+        <div className={`absolute bottom-4 right-4 w-32 h-32 rounded-full blur-2xl pointer-events-none ${isDarkroom ? 'bg-amber-500/15' : 'bg-amber-400/10'}`} />
 
         {/* Stadium Architectural Overlay SVG */}
         <svg
-          className="w-full h-full text-amber-500/15"
+          className={`w-full h-full ${isDarkroom ? 'text-amber-500/25' : 'text-amber-500/15'}`}
           viewBox="0 0 1000 650"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
@@ -204,18 +212,18 @@ export const LivingStadium: React.FC<LivingStadiumProps> = ({
             strokeWidth="1"
           />
 
-          {/* Pitch Perimeter (Greenish Grass Aura) */}
+          {/* Pitch Perimeter (Greenish Grass Aura vs Aged Muddy Turf) */}
           <rect
             x="220"
             y="160"
             width="560"
             height="330"
             rx="16"
-            fill="#061A12"
-            fillOpacity="0.45"
-            stroke="#10B981"
+            fill={isDarkroom ? "#1B2217" : "#061A12"}
+            fillOpacity={isDarkroom ? 0.6 : 0.45}
+            stroke={isDarkroom ? "#D97706" : "#10B981"}
             strokeWidth="1.5"
-            strokeOpacity="0.3"
+            strokeOpacity={isDarkroom ? 0.4 : 0.3}
           />
 
           {/* Halfway line */}
@@ -224,9 +232,9 @@ export const LivingStadium: React.FC<LivingStadiumProps> = ({
             y1="160"
             x2="500"
             y2="490"
-            stroke="#10B981"
+            stroke={isDarkroom ? "#D97706" : "#10B981"}
             strokeWidth="1.5"
-            strokeOpacity="0.35"
+            strokeOpacity={isDarkroom ? 0.45 : 0.35}
           />
 
           {/* Center Circle */}
