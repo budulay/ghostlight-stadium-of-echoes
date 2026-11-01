@@ -113,7 +113,7 @@ export const KYIV_1975_ARTIFACT = `data:image/svg+xml;utf8,<svg xmlns="http://ww
     <path d="M-6 24 Q15 32 33 36" stroke="%23FFF" stroke-width="4" stroke-linecap="round"/>
   </g>
 
-  <!-- Pitch and legendary #11 running under floodlights -->
+  <!-- Pitch and legendary No. 11 running under floodlights -->
   <rect x="0" y="550" width="800" height="50" fill="%230F291E"/>
   <line x1="50" y1="560" x2="750" y2="560" stroke="%23FFF" stroke-width="2" opacity="0.4"/>
   

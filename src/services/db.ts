@@ -56,7 +56,8 @@ export async function seedSampleMemoriesIfEmpty(samples: StoredMemory[]): Promis
   const tx = db.transaction('memories', 'readwrite');
   for (const item of samples) {
     const existing = await tx.store.get(item.id);
-    if (!existing) {
+    // If not in DB yet OR if it's an official demo exhibit, update it with fresh assets
+    if (!existing || existing.isDemo) {
       await tx.store.put(item);
     }
   }
