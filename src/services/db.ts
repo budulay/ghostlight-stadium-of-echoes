@@ -53,14 +53,13 @@ export async function deleteMemoryFromDB(id: string): Promise<void> {
 
 export async function seedSampleMemoriesIfEmpty(samples: StoredMemory[]): Promise<StoredMemory[]> {
   const db = await getDB();
-  const count = await db.count('memories');
-  if (count === 0 && samples.length > 0) {
-    const tx = db.transaction('memories', 'readwrite');
-    for (const item of samples) {
+  const tx = db.transaction('memories', 'readwrite');
+  for (const item of samples) {
+    const existing = await tx.store.get(item.id);
+    if (!existing) {
       await tx.store.put(item);
     }
-    await tx.done;
-    return samples;
   }
+  await tx.done;
   return getAllStoredMemories();
 }
