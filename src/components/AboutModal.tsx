@@ -55,6 +55,15 @@ export const AboutModal: React.FC<AboutModalProps> = ({ isOpen, onClose }) => {
               Entering an abandoned football stadium at midnight, listening to the roar of thousands who once stood where you stand.
             </p>
 
+            <div className="p-4 rounded-xl bg-gradient-to-r from-amber-950/30 via-slate-900/60 to-amber-950/30 border border-amber-400/30 text-center space-y-1">
+              <div className="font-cinzel text-xs sm:text-sm font-bold text-amber-200 tracking-wider">
+                “Football remembers the scores. GHOSTLIGHT remembers the people.”
+              </div>
+              <div className="text-[11px] font-serif italic text-slate-300">
+                The final whistle is not the end of a memory.
+              </div>
+            </div>
+
             <p>
               <strong>Ghostlight: Stadium of Echoes</strong> is an interactive digital sanctuary where forgotten football recollections are preserved and resurrected. Guided by locally running open-weight intelligence (Google Gemma 3 4B), each personal memory is turned into a structured, cinematic museum exhibit.
             </p>

@@ -1,5 +1,8 @@
 # GHOSTLIGHT: STADIUM OF ECHOES
 > *“Where memories never die.”*
+>
+> **“Football remembers the scores. GHOSTLIGHT remembers the people.”**  
+> *The final whistle is not the end of a memory.*
 
 An interactive digital museum and sensory installation where forgotten football memories come back to life through locally running open-weight artificial intelligence (**Google Gemma 3 4B** via **Ollama**).
 
